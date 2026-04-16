@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAPTOR SIGNAL — Market Sentiment Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Barlow+Condensed:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg:       #060810;
+    --bg2:      #0c1020;
+    --bg3:      #111827;
+    --border:   #1e2a40;
+    --accent:   #00d4ff;
+    --accent2:  #0066ff;
+    --fear:     #ff3b3b;
+    --neutral:  #f59e0b;
+    --greed:    #10b981;
+    --text:     #e2e8f0;
+    --muted:    #64748b;
+    --font-mono: 'Space Mono', monospace;
+    --font-ui:   'Barlow Condensed', sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-ui);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* GRID BG */
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .wrap { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:0 20px 60px; }
+
+  /* HEADER */
+  header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 28px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 36px;
+  }
+  .logo {
+    font-family: var(--font-mono);
+    font-size: clamp(14px,2vw,18px);
+    font-weight:700;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+  }
+  .logo span { color: var(--muted); font-weight:400; }
+  #updated-badge {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* COMPOSITE SIGNAL */
+  .composite-block {
+    text-align:center;
+    padding: 48px 20px 40px;
+    margin-bottom: 40px;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    position:relative;
+    overflow:hidden;
+  }
+  .composite-block::before {
+    content:'';
+    position:absolute; top:0; left:50%; transform:translateX(-50%);
+    width:200px; height:1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+  .composite-label {
+    font-family: var(--font-mono);
+    font-size:11px;
+    letter-spacing:0.25em;
+    color: var(--muted);
+    margin-bottom:16px;
+    text-transform:uppercase;
+  }
+  #composite-signal {
+    font-family: var(--font-ui);
+    font-size: clamp(52px, 10vw, 88px);
+    font-weight:900;
+    letter-spacing:-0.02em;
+    line-height:1;
+    transition: color 0.5s;
+  }
+  #composite-signal.FEAR    { color: var(--fear); text-shadow: 0 0 40px rgba(255,59,59,0.4); }
+  #composite-signal.GREED   { color: var(--greed); text-shadow: 0 0 40px rgba(16,185,129,0.4); }
+  #composite-signal.NEUTRAL { color: var(--neutral); text-shadow: 0 0 40px rgba(245,158,11,0.4); }
+  #composite-signal.FEAR\/NEUTRAL  { color: #ff8c42; }
+  #composite-signal.GREED\/NEUTRAL { color: #6ee7b7; }
+  .composite-sub {
+    font-size:14px;
+    color: var(--muted);
+    margin-top:12px;
+    font-weight:300;
+    letter-spacing:0.1em;
+  }
+
+  /* KPI GRID */
+  .kpi-grid {
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap:16px;
+    margin-bottom:40px;
+  }
+  .kpi-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding:24px 20px;
+    position:relative;
+    overflow:hidden;
+    transition: border-color 0.3s;
+  }
+  .kpi-card:hover { border-color: var(--accent); }
+  .kpi-card::after {
+    content:'';
+    position:absolute; bottom:0; left:0; right:0; height:2px;
+  }
+  .kpi-card.fear::after  { background: var(--fear); }
+  .kpi-card.greed::after { background: var(--greed); }
+  .kpi-card.neutral::after { background: var(--neutral); }
+  .kpi-card.na::after    { background: var(--muted); }
+
+  .kpi-name {
+    font-family: var(--font-mono);
+    font-size:10px;
+    letter-spacing:0.2em;
+    color: var(--muted);
+    margin-bottom:10px;
+    text-transform:uppercase;
+  }
+  .kpi-value {
+    font-family: var(--font-mono);
+    font-size:28px;
+    font-weight:700;
+    margin-bottom:6px;
+  }
+  .kpi-value.fear    { color: var(--fear); }
+  .kpi-value.greed   { color: var(--greed); }
+  .kpi-value.neutral { color: var(--neutral); }
+  .kpi-value.na      { color: var(--muted); }
+
+  .kpi-meta {
+    display:flex; justify-content:space-between; align-items:center;
+    margin-top:8px;
+  }
+  .kpi-signal {
+    font-size:11px; font-weight:700; letter-spacing:0.15em;
+  }
+  .kpi-signal.fear    { color: var(--fear); }
+  .kpi-signal.greed   { color: var(--greed); }
+  .kpi-signal.neutral { color: var(--neutral); }
+
+  .kpi-pct {
+    font-family: var(--font-mono);
+    font-size:10px; color: var(--muted);
+  }
+
+  /* PERCENTILE BAR */
+  .pct-bar-wrap { margin-top:10px; }
+  .pct-bar-track {
+    background: var(--bg3);
+    height:3px;
+    border-radius:2px;
+    overflow:hidden;
+  }
+  .pct-bar-fill {
+    height:100%;
+    border-radius:2px;
+    transition: width 0.8s ease;
+  }
+
+  /* CHARTS */
+  .charts-grid {
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:16px;
+    margin-bottom:40px;
+  }
+  @media(max-width:700px){ .charts-grid { grid-template-columns:1fr; } }
+
+  .chart-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding:24px;
+  }
+  .chart-title {
+    font-family: var(--font-mono);
+    font-size:10px;
+    letter-spacing:0.2em;
+    color: var(--muted);
+    margin-bottom:16px;
+    text-transform:uppercase;
+  }
+  .chart-card canvas { max-height:200px; }
+
+  /* HISTORY TABLE */
+  .section-title {
+    font-family: var(--font-mono);
+    font-size:11px;
+    letter-spacing:0.2em;
+    color: var(--muted);
+    text-transform:uppercase;
+    margin-bottom:16px;
+    padding-bottom:8px;
+    border-bottom:1px solid var(--border);
+  }
+  .table-wrap { overflow-x:auto; margin-bottom:40px; }
+  table {
+    width:100%;
+    border-collapse:collapse;
+    font-family: var(--font-mono);
+    font-size:12px;
+  }
+  th {
+    text-align:left;
+    padding:10px 12px;
+    color: var(--muted);
+    font-size:10px;
+    letter-spacing:0.15em;
+    border-bottom:1px solid var(--border);
+    white-space:nowrap;
+  }
+  td {
+    padding:10px 12px;
+    border-bottom:1px solid rgba(30,42,64,0.5);
+    white-space:nowrap;
+  }
+  tr:hover td { background: rgba(0,212,255,0.03); }
+  .sig-pill {
+    display:inline-block;
+    padding:2px 8px;
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:0.15em;
+    border-radius:2px;
+  }
+  .sig-pill.fear    { background:rgba(255,59,59,0.15);  color:var(--fear); }
+  .sig-pill.greed   { background:rgba(16,185,129,0.15); color:var(--greed); }
+  .sig-pill.neutral { background:rgba(245,158,11,0.15); color:var(--neutral); }
+
+  /* DOWNLOAD BUTTON */
+  .btn-row { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:40px; }
+  .btn {
+    display:inline-flex; align-items:center; gap:8px;
+    font-family: var(--font-mono);
+    font-size:11px;
+    letter-spacing:0.15em;
+    padding:12px 20px;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    color: var(--text);
+    cursor:pointer;
+    text-decoration:none;
+    transition: border-color 0.2s, color 0.2s;
+    text-transform:uppercase;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-accent {
+    border-color: var(--accent2);
+    color: var(--accent);
+  }
+
+  /* FOOTER */
+  footer {
+    border-top:1px solid var(--border);
+    padding-top:24px;
+    font-size:11px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    letter-spacing:0.05em;
+    line-height:1.8;
+  }
+  footer a { color: var(--accent); text-decoration:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="logo">RAPTOR<span> // </span>SIGNAL</div>
+    <div id="updated-badge">AGGIORNATO: —</div>
+  </header>
+
+  <!-- COMPOSITE -->
+  <div class="composite-block">
+    <div class="composite-label">◈ SEGNALE COMPOSITO DI MERCATO</div>
+    <div id="composite-signal">—</div>
+    <div class="composite-sub">PUT/CALL RATIO · VIX · SKEW INDEX · PERCENTILE 252gg</div>
+  </div>
+
+  <!-- KPI CARDS -->
+  <div class="kpi-grid" id="kpi-grid">
+    <!-- populated by JS -->
+  </div>
+
+  <!-- CHARTS -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title">▸ VIX — Volatilità Implicita S&P500</div>
+      <canvas id="chart-vix"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">▸ Put/Call Ratio Equity (MA10)</div>
+      <canvas id="chart-pc"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">▸ SKEW Index — Tail Risk</div>
+      <canvas id="chart-skew"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">▸ Put/Call Ratio Index</div>
+      <canvas id="chart-index"></canvas>
+    </div>
+  </div>
+
+  <!-- DOWNLOAD -->
+  <div class="btn-row">
+    <a id="btn-excel" href="#" class="btn btn-accent" onclick="downloadExcel(event)">
+      ⬇ SCARICA EXCEL
+    </a>
+    <a id="btn-json" href="data/signal.json" download="raptor_signal.json" class="btn">
+      ⬇ SCARICA JSON
+    </a>
+  </div>
+
+  <!-- HISTORY TABLE -->
+  <div class="section-title">◈ STORICO SEGNALI</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>DATA</th>
+          <th>P/C EQUITY</th>
+          <th>P/C TOTAL</th>
+          <th>P/C INDEX</th>
+          <th>VIX</th>
+          <th>SKEW</th>
+          <th>COMPOSITO</th>
+        </tr>
+      </thead>
+      <tbody id="history-tbody"></tbody>
+    </table>
+  </div>
+
+  <footer>
+    RAPTOR SIGNAL — by Giorgio Goldoni · Consulente Finanziario Autonomo OCF<br>
+    Fonte dati: CBOE.com · Yahoo Finance · Aggiornamento automatico via GitHub Actions<br>
+    <br>
+    ⚠ I segnali sono indicatori di sentiment e non costituiscono consulenza finanziaria.<br>
+    Parte del sistema <a href="https://giorgiogoldoni.github.io/raptor-wealth-meridian" target="_blank">RAPTOR WEALTH MERIDIAN</a>
+  </footer>
+
+</div>
+
+<script>
+// ─── UTILITY ───────────────────────────────────────────────
+function sigClass(sig) {
+  if (!sig || sig === 'N/A') return 'na';
+  const s = sig.toUpperCase();
+  if (s.includes('FEAR') || s.includes('TAIL')) return 'fear';
+  if (s.includes('GREED') || s.includes('COMP')) return 'greed';
+  return 'neutral';
+}
+
+function ma(arr, n) {
+  return arr.map((_, i) => {
+    const slice = arr.slice(Math.max(0, i - n + 1), i + 1).filter(v => v != null);
+    return slice.length ? slice.reduce((a, b) => a + b) / slice.length : null;
+  });
+}
+
+function barColor(pct, inverted=false) {
+  if (pct == null) return '#334155';
+  if (inverted) pct = 100 - pct;
+  if (pct >= 75) return '#ff3b3b';
+  if (pct <= 25) return '#10b981';
+  return '#f59e0b';
+}
+
+// ─── MAIN ───────────────────────────────────────────────────
+fetch('data/signal.json')
+  .then(r => r.json())
+  .then(data => {
+    renderComposite(data);
+    renderKPIs(data);
+    renderCharts(data);
+    renderTable(data);
+  })
+  .catch(err => {
+    document.getElementById('composite-signal').textContent = 'NO DATA';
+    console.error(err);
+  });
+
+// ─── COMPOSITE ──────────────────────────────────────────────
+function renderComposite(data) {
+  const el = document.getElementById('composite-signal');
+  const comp = data.composite || 'N/A';
+  el.textContent = comp;
+  el.className = comp.replace('/', '\\/');
+  document.getElementById('updated-badge').textContent = 'AGGIORNATO: ' + (data.updated || '—');
+}
+
+// ─── KPI CARDS ──────────────────────────────────────────────
+function renderKPIs(data) {
+  const s = data.signals || {};
+  const l = data.latest || {};
+  const cards = [
+    { key:'pc_equity', label:'P/C RATIO EQUITY',    value: l.pc_equity, desc:'Volume put/call azioni' },
+    { key:'pc_total',  label:'P/C RATIO TOTAL',     value: l.pc_total,  desc:'Volume put/call totale' },
+    { key:'vix',       label:'VIX',                 value: l.vix,       desc:'Volatilità implicita SPX' },
+    { key:'skew',      label:'SKEW INDEX',           value: l.skew,      desc:'Rischio evento coda' },
+  ];
+  const grid = document.getElementById('kpi-grid');
+  grid.innerHTML = cards.map(c => {
+    const sig = s[c.key] || {};
+    const cl = sigClass(sig.signal);
+    const pct = sig.percentile;
+    const fillColor = barColor(pct, c.key !== 'vix');
+    return `
+    <div class="kpi-card ${cl}">
+      <div class="kpi-name">${c.label}</div>
+      <div class="kpi-value ${cl}">${c.value != null ? c.value.toFixed(2) : '—'}</div>
+      <div class="kpi-meta">
+        <span class="kpi-signal ${cl}">${sig.signal || 'N/A'}</span>
+        <span class="kpi-pct">${pct != null ? 'Pct ' + pct + '%' : ''}</span>
+      </div>
+      <div class="pct-bar-wrap">
+        <div class="pct-bar-track">
+          <div class="pct-bar-fill" style="width:${pct||0}%;background:${fillColor}"></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── CHARTS ─────────────────────────────────────────────────
+function renderCharts(data) {
+  const h = data.history || [];
+  const labels = h.map(r => r.date.slice(5));
+  const chartDefaults = {
+    responsive:true, maintainAspectRatio:true,
+    plugins:{ legend:{ display:false } },
+    scales:{
+      x:{ ticks:{ color:'#475569', font:{family:'Space Mono',size:9}, maxTicksLimit:8 }, grid:{color:'rgba(30,42,64,0.5)'} },
+      y:{ ticks:{ color:'#475569', font:{family:'Space Mono',size:9} }, grid:{color:'rgba(30,42,64,0.5)'} }
+    }
+  };
+
+  const mkChart = (id, labels, dataset, color) => {
+    new Chart(document.getElementById(id), {
+      type:'line',
+      data:{ labels, datasets:[{ data:dataset, borderColor:color, borderWidth:1.5, pointRadius:0, tension:0.3, fill:true, backgroundColor: color+'18' }] },
+      options:{ ...chartDefaults }
+    });
+  };
+
+  mkChart('chart-vix',   labels, h.map(r=>r.vix),       '#ff3b3b');
+  mkChart('chart-pc',    labels, ma(h.map(r=>r.pc_equity),10), '#00d4ff');
+  mkChart('chart-skew',  labels, h.map(r=>r.skew),      '#a855f7');
+  mkChart('chart-index', labels, h.map(r=>r.pc_index),  '#f59e0b');
+}
+
+// ─── TABLE ──────────────────────────────────────────────────
+function renderTable(data) {
+  const h = [...(data.history || [])].reverse();
+  const tbody = document.getElementById('history-tbody');
+
+  // Calcola composito per ogni riga dalla history
+  function rowComposite(idx, history) {
+    // Semplificato: usa VIX come proxy
+    const r = history[idx];
+    if (!r) return 'N/A';
+    let fear=0, greed=0;
+    if (r.vix >= 28) fear++; else if (r.vix <= 16) greed++;
+    if (r.pc_equity >= 0.70) fear++; else if (r.pc_equity <= 0.52) greed++;
+    if (r.pc_total >= 0.88) fear++; else if (r.pc_total <= 0.70) greed++;
+    if (fear >= 2) return 'FEAR';
+    if (greed >= 2) return 'GREED';
+    if (fear === 1) return 'FEAR/NEUTRAL';
+    if (greed === 1) return 'GREED/NEUTRAL';
+    return 'NEUTRAL';
+  }
+
+  const revHistory = [...(data.history||[])].reverse();
+  tbody.innerHTML = revHistory.map((r, i) => {
+    const comp = i === 0 ? (data.composite||'N/A') : rowComposite(data.history.length - 1 - i, data.history);
+    const cl = sigClass(comp);
+    return `<tr>
+      <td>${r.date}</td>
+      <td>${r.pc_equity!=null?r.pc_equity.toFixed(2):'—'}</td>
+      <td>${r.pc_total!=null?r.pc_total.toFixed(2):'—'}</td>
+      <td>${r.pc_index!=null?r.pc_index.toFixed(2):'—'}</td>
+      <td>${r.vix!=null?r.vix.toFixed(1):'—'}</td>
+      <td>${r.skew!=null?r.skew.toFixed(1):'—'}</td>
+      <td><span class="sig-pill ${cl}">${comp}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── EXCEL DOWNLOAD ─────────────────────────────────────────
+function downloadExcel(e) {
+  e.preventDefault();
+  fetch('data/signal.json')
+    .then(r => r.json())
+    .then(data => {
+      const h = data.history || [];
+      // Crea CSV con metriche
+      const rows = [
+        ['RAPTOR SIGNAL — Export Dati'],
+        ['Aggiornato:', data.updated],
+        ['Segnale Composito:', data.composite],
+        [],
+        ['Segnali correnti'],
+        ['Indicatore','Valore','Segnale','Percentile 252gg'],
+        ['P/C Equity', data.latest?.pc_equity, data.signals?.pc_equity?.signal, data.signals?.pc_equity?.percentile],
+        ['P/C Total',  data.latest?.pc_total,  data.signals?.pc_total?.signal,  data.signals?.pc_total?.percentile],
+        ['VIX',        data.latest?.vix,        data.signals?.vix?.signal,        data.signals?.vix?.percentile],
+        ['SKEW',       data.latest?.skew,       data.signals?.skew?.signal,       data.signals?.skew?.percentile],
+        [],
+        ['Storico'],
+        ['Data','P/C Equity','P/C Total','P/C Index','VIX','SKEW'],
+        ...h.map(r => [r.date, r.pc_equity, r.pc_total, r.pc_index, r.vix, r.skew])
+      ];
+      const csv = rows.map(r => r.join('\t')).join('\n');
+      const blob = new Blob(['\uFEFF'+csv], {type:'text/tab-separated-values;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'RAPTOR_SIGNAL_' + (data.updated||'data') + '.xls';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+}
+</script>
+</body>
+</html>
