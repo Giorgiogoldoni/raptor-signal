@@ -1,10 +1,12 @@
-name: RAPTOR SIGNAL — Daily Fetch
+name: RAPTOR SIGNAL — Data Fetch 4x Daily
 
 on:
   schedule:
-    # Ogni giorno feriale alle 22:00 UTC (dopo chiusura mercati USA)
-    - cron: '0 22 * * 1-5'
-  workflow_dispatch:  # Permette esecuzione manuale
+    - cron: '0 8 * * 1-5'    # 08:00 UTC — apertura mercati europei
+    - cron: '0 14 * * 1-5'   # 14:00 UTC — pre-apertura USA
+    - cron: '30 20 * * 1-5'  # 20:30 UTC — dopo chiusura USA
+    - cron: '0 23 * * 1-5'   # 23:00 UTC — aggiornamento notturno
+  workflow_dispatch:           # Esecuzione manuale dalla tab Actions
 
 permissions:
   contents: write
@@ -16,18 +18,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Setup Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Run data fetcher
+      - name: Run RAPTOR SIGNAL fetcher
         run: python scripts/fetch_data.py
 
-      - name: Commit and push data
+      - name: Commit and push updated data
         run: |
-          git config --local user.email "action@github.com"
+          git config --local user.email "raptor-signal@github-actions"
           git config --local user.name "RAPTOR SIGNAL Bot"
           git add data/signal.json
-          git diff --staged --quiet || git commit -m "📡 Update signal data $(date -u +%Y-%m-%d)"
+          git diff --staged --quiet || git commit -m "📡 RAPTOR SIGNAL update $(date -u +'%Y-%m-%d %H:%M') UTC"
           git push
