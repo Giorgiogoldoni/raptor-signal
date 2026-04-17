@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAPTOR SIGNAL — Market Sentiment Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans+Condensed:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg:        #f5f5f0;
+  --bg2:       #ffffff;
+  --bg3:       #f0efe8;
+  --border:    #d4d0c8;
+  --border2:   #e8e4dc;
+  --orange:    #ff6600;
+  --orange2:   #cc4400;
+  --blue:      #0066cc;
+  --red:       #cc0000;
+  --green:     #007700;
+  --amber:     #996600;
+  --text:      #1a1a1a;
+  --text2:     #444444;
+  --muted:     #888888;
+  --mono:      'IBM Plex Mono', monospace;
+  --sans:      'IBM Plex Sans Condensed', sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  background: #1a1a1a;
+  color: #f0efe8;
+  padding: 0 20px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.topbar-left { display:flex; align-items:center; gap:20px; }
+.topbar-logo { color: var(--orange); font-weight:700; font-size:13px; }
+.topbar-sep { color:#444; }
+#topbar-composite { font-weight:700; }
+#topbar-ts { color:#888; }
+.topbar-right { display:flex; gap:16px; }
+.topbar-kpi { display:flex; gap:6px; }
+.topbar-kpi span:first-child { color:#888; }
+.topbar-kpi span:last-child { font-weight:500; }
+
+/* ── WRAP ── */
+.wrap { max-width:1400px; margin:0 auto; padding:0 16px 60px; }
+
+/* ── SECTION HEADERS ── */
+.sec-head {
+  display:flex; align-items:center; gap:10px;
+  padding: 18px 0 10px;
+  border-bottom: 2px solid var(--orange);
+  margin-bottom: 14px;
+}
+.sec-head h2 {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.sec-head .sec-sub {
+  font-size: 11px;
+  color: var(--muted);
+  font-family: var(--mono);
+}
+
+/* ── COMPOSITE BANNER ── */
+.composite-banner {
+  background: #1a1a1a;
+  color: #f0efe8;
+  padding: 20px 24px;
+  margin: 16px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.comp-left { display:flex; align-items:baseline; gap:16px; }
+.comp-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: #888;
+}
+#comp-value {
+  font-family: var(--mono);
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+}
+#comp-value.RISK-OFF  { color: #ff4444; }
+#comp-value.CAUTO     { color: #ff8800; }
+#comp-value.NEUTRO    { color: #ffcc00; }
+#comp-value.POSITIVO  { color: #88dd44; }
+#comp-value.RISK-ON   { color: #44dd88; }
+
+.comp-right {
+  display:flex; gap:24px; flex-wrap:wrap;
+}
+.comp-kpi {
+  text-align:right;
+}
+.comp-kpi-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: #666;
+  letter-spacing: 0.15em;
+  display:block;
+}
+.comp-kpi-val {
+  font-family: var(--mono);
+  font-size: 20px;
+  font-weight: 700;
+}
+.comp-kpi-val.red    { color: #ff4444; }
+.comp-kpi-val.orange { color: #ff8800; }
+.comp-kpi-val.green  { color: #44dd88; }
+.comp-kpi-val.yellow { color: #ffcc00; }
+
+/* ── INDICATOR TABLE ── */
+.ind-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+@media(max-width:900px) { .ind-grid { grid-template-columns: repeat(2,1fr); } }
+@media(max-width:560px) { .ind-grid { grid-template-columns: 1fr; } }
+
+.ind-card {
+  background: var(--bg2);
+  padding: 14px 16px;
+}
+.ind-card-head {
+  display:flex; justify-content:space-between; align-items:flex-start;
+  margin-bottom: 8px;
+}
+.ind-name {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.ind-signal {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  letter-spacing: 0.1em;
+}
+.ind-signal.fear    { background:#fee2e2; color:#cc0000; }
+.ind-signal.greed   { background:#d1fae5; color:#007700; }
+.ind-signal.neutral { background:#fef9c3; color:#996600; }
+.ind-signal.nd      { background:#f3f4f6; color:#999; }
+
+.ind-value {
+  font-family: var(--mono);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.ind-meta {
+  display:flex; justify-content:space-between;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.ind-trend-up   { color: var(--green); }
+.ind-trend-down { color: var(--red); }
+
+/* Percentile bar */
+.pct-wrap { margin-bottom: 10px; }
+.pct-track {
+  height: 4px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  position: relative;
+}
+.pct-fill {
+  height: 100%;
+  transition: width 0.6s ease;
+}
+.pct-labels {
+  display:flex; justify-content:space-between;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* Interpretazione */
+.ind-interp {
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.5;
+  padding-top: 8px;
+  border-top: 1px solid var(--border2);
+}
+
+/* ── RATIO TABLE ── */
+.ratio-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-size: 12px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+}
+.ratio-table th {
+  background: #1a1a1a;
+  color: #f0efe8;
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.ratio-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border2);
+  vertical-align: middle;
+}
+.ratio-table tr:hover td { background: #fffef5; }
+.ratio-table tr:last-child td { border-bottom: none; }
+.ratio-table .val-cell {
+  font-weight: 700;
+  text-align: right;
+}
+.ratio-table .sig-cell { text-align: center; }
+.ratio-table .trend-cell { color: var(--muted); font-size: 11px; }
+.ratio-table .interp-cell {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text2);
+  max-width: 320px;
+}
+.pill {
+  display:inline-block;
+  padding: 2px 7px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+.pill.fear    { background:#fee2e2; color:#cc0000; }
+.pill.greed   { background:#d1fae5; color:#007700; }
+.pill.neutral { background:#fef9c3; color:#996600; }
+.pill.nd      { background:#f3f4f6; color:#999; }
+
+/* ── PROIEZIONE ── */
+.proj-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+@media(max-width:700px) { .proj-grid { grid-template-columns:1fr; } }
+
+.proj-card {
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  overflow: hidden;
+}
+.proj-head {
+  background: #1a1a1a;
+  color: #f0efe8;
+  padding: 10px 14px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+}
+.proj-head span { color: #888; }
+.proj-body { padding: 14px; }
+.proj-regime {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.proj-regime.RISK-ON   { color: var(--green); }
+.proj-regime.POSITIVO  { color: #448844; }
+.proj-regime.NEUTRO    { color: var(--amber); }
+.proj-regime.CAUTO     { color: #cc6600; }
+.proj-regime.RISK-OFF  { color: var(--red); }
+
+.proj-score {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.prob-bars { display:flex; flex-direction:column; gap:5px; margin-bottom:10px; }
+.prob-row { display:flex; align-items:center; gap:8px; }
+.prob-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted);
+  width: 58px;
+  flex-shrink: 0;
+}
+.prob-track {
+  flex: 1; height: 8px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+}
+.prob-fill { height:100%; }
+.prob-fill.risk-on  { background: var(--green); }
+.prob-fill.neutral  { background: var(--amber); }
+.prob-fill.risk-off { background: var(--red); }
+.prob-pct {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  width: 32px;
+  text-align: right;
+}
+.proj-driver {
+  font-size: 11px;
+  color: var(--muted);
+  font-family: var(--mono);
+  border-top: 1px solid var(--border2);
+  padding-top: 8px;
+}
+
+/* ── CHARTS ── */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+@media(max-width:700px) { .charts-grid { grid-template-columns:1fr; } }
+
+.chart-card {
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  padding: 14px;
+}
+.chart-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.chart-card canvas { max-height:160px; }
+
+/* ── HISTORY TABLE ── */
+.hist-table {
+  width:100%; border-collapse:collapse;
+  font-family: var(--mono); font-size: 11px;
+  border: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+.hist-table th {
+  background: #1a1a1a; color:#f0efe8;
+  padding: 7px 10px; text-align:right;
+  font-size: 9px; letter-spacing:0.12em;
+  white-space:nowrap;
+}
+.hist-table th:first-child { text-align:left; }
+.hist-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border2);
+  text-align: right;
+  white-space: nowrap;
+}
+.hist-table td:first-child { text-align:left; font-weight:500; }
+.hist-table tr:hover td { background:#fffef5; }
+.hist-table tr:last-child td { border-bottom:none; }
+
+/* ── DOWNLOAD ── */
+.btn-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:24px; }
+.btn {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  padding: 9px 16px;
+  border: 1px solid #1a1a1a;
+  background: #1a1a1a;
+  color: #f0efe8;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.btn:hover { background: var(--orange2); border-color: var(--orange2); }
+.btn-sec { background: var(--bg2); color: var(--text); border-color: var(--border); }
+.btn-sec:hover { background: var(--bg3); }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 2px solid var(--border);
+  padding: 16px 0;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 2;
+}
+footer a { color: var(--orange2); text-decoration:none; }
+
+/* ── NOTE BOX ── */
+.note-box {
+  background: #fffef0;
+  border: 1px solid #e6d080;
+  border-left: 3px solid var(--orange);
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="topbar-logo">RAPTOR SIGNAL</span>
+    <span class="topbar-sep">|</span>
+    <span>SEGNALE: <span id="topbar-composite" style="color:#ffcc00">—</span></span>
+    <span id="topbar-ts" style="color:#666">—</span>
+  </div>
+  <div class="topbar-right">
+    <div class="topbar-kpi"><span>VIX</span><span id="tb-vix">—</span></div>
+    <div class="topbar-kpi"><span>VSTOXX</span><span id="tb-vstoxx">—</span></div>
+    <div class="topbar-kpi"><span>P/C EQ</span><span id="tb-pc">—</span></div>
+    <div class="topbar-kpi"><span>EUR/USD</span><span id="tb-eurusd">—</span></div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- COMPOSITE BANNER -->
+  <div class="composite-banner">
+    <div class="comp-left">
+      <div>
+        <div class="comp-label">◈ SEGNALE COMPOSITO</div>
+        <div id="comp-value">—</div>
+      </div>
+    </div>
+    <div class="comp-right">
+      <div class="comp-kpi">
+        <span class="comp-kpi-label">BREVE 2-4W</span>
+        <div class="comp-kpi-val" id="proj-short-top">—</div>
+      </div>
+      <div class="comp-kpi">
+        <span class="comp-kpi-label">MEDIO 1-3M</span>
+        <div class="comp-kpi-val" id="proj-mid-top">—</div>
+      </div>
+      <div class="comp-kpi">
+        <span class="comp-kpi-label">LUNGO 6-18M</span>
+        <div class="comp-kpi-val" id="proj-long-top">—</div>
+      </div>
+      <div class="comp-kpi">
+        <span class="comp-kpi-label">AGGIORNATO</span>
+        <div class="comp-kpi-val" style="font-size:13px;color:#aaa" id="comp-ts">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INDICATORI SENTIMENT -->
+  <div class="sec-head">
+    <h2>Indicatori di Sentiment</h2>
+    <span class="sec-sub">CBOE · Yahoo Finance · Percentile 252 giorni</span>
+  </div>
+  <div class="ind-grid" id="ind-grid"></div>
+
+  <!-- ANALISI INTERMARKET -->
+  <div class="sec-head">
+    <h2>Analisi Intermarket</h2>
+    <span class="sec-sub">USA + Europa · Ratio vs MA50</span>
+  </div>
+  <div class="note-box">
+    I ratio intermarket confrontano la forza relativa tra asset class. Un ratio <strong>sopra la MA50</strong> indica che il numeratore è più forte del denominatore — segnale di risk-on se il numeratore è un asset rischioso. Un ratio <strong>sotto la MA50</strong> indica debolezza relativa.
+  </div>
+  <table class="ratio-table" id="ratio-table">
+    <thead>
+      <tr>
+        <th>RATIO</th>
+        <th>DESCRIZIONE</th>
+        <th style="text-align:right">VALORE</th>
+        <th style="text-align:right">MA50</th>
+        <th style="text-align:center">TREND</th>
+        <th style="text-align:center">SEGNALE</th>
+        <th>INTERPRETAZIONE</th>
+      </tr>
+    </thead>
+    <tbody id="ratio-tbody"></tbody>
+  </table>
+
+  <!-- ROTAZIONE GEOGRAFICA -->
+  <div class="sec-head">
+    <h2>Rotazione Geografica</h2>
+    <span class="sec-sub">USA · Europa · Emergenti · Triangolo flussi</span>
+  </div>
+  <div id="geo-rotation-widget" style="margin-bottom:20px"></div>
+
+  <!-- PROIEZIONE -->
+  <div class="sec-head">
+    <h2>Proiezione Direzionale</h2>
+    <span class="sec-sub">Score composito pesato · 3 orizzonti temporali</span>
+  </div>
+  <div class="note-box">
+    La proiezione non prevede livelli di prezzo ma stima la <strong>probabilità di regime</strong> (Risk-On / Neutro / Risk-Off) su tre orizzonti. È il risultato della combinazione ponderata di tutti gli indicatori raccolti. Non costituisce consulenza finanziaria.
+  </div>
+  <div class="proj-grid" id="proj-grid"></div>
+
+  <!-- GRAFICI -->
+  <div class="sec-head">
+    <h2>Grafici Storici</h2>
+    <span class="sec-sub">Ultimi 6 mesi · Sentiment: MA50 · Intermarket: Bollinger Bands 20 ±2σ</span>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title">VIX — Volatilità Implicita S&P500</div>
+      <canvas id="ch-vix"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">VSTOXX — Volatilità Euro Stoxx 50</div>
+      <canvas id="ch-vstoxx"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Put/Call Ratio Equity (MA10)</div>
+      <canvas id="ch-pc"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">HYG/IEI — Risk Appetite Credito</div>
+      <canvas id="ch-hyg"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Copper/Gold Ratio — Crescita Reale</div>
+      <canvas id="ch-copper"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">EUR/USD</div>
+      <canvas id="ch-eurusd"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Yield Curve 10Y-2Y — Spread</div>
+      <canvas id="ch-yc"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">EEM / SPY — Emergenti vs S&amp;P500</div>
+      <canvas id="ch-eem"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">TIP / IEF — Inflazione Attesa</div>
+      <canvas id="ch-tip"></canvas>
+    </div>
+  </div>
+
+  <!-- DOWNLOAD -->
+  <div class="btn-row">
+    <a href="#" class="btn" onclick="dlExcel(event)">⬇ SCARICA EXCEL</a>
+    <a href="data/signal.json" download="raptor_signal.json" class="btn btn-sec">⬇ SCARICA JSON</a>
+  </div>
+
+  <!-- STORICO -->
+  <div class="sec-head">
+    <h2>Storico Segnali</h2>
+  </div>
+  <div style="overflow-x:auto">
+    <table class="hist-table">
+      <thead>
+        <tr>
+          <th>DATA</th>
+          <th>VIX</th>
+          <th>VSTOXX</th>
+          <th>P/C EQ</th>
+          <th>P/C TOT</th>
+          <th>SKEW</th>
+          <th>HYG/IEI</th>
+          <th>Cu/Au</th>
+          <th>EUR/USD</th>
+          <th>YC SPREAD</th>
+        </tr>
+      </thead>
+      <tbody id="hist-tbody"></tbody>
+    </table>
+  </div>
+
+  <footer>
+    RAPTOR SIGNAL v2 — Giorgio Goldoni · Consulente Finanziario Autonomo OCF<br>
+    Dati: CBOE.com · Yahoo Finance · Aggiornamento automatico 4×/giorno via GitHub Actions<br>
+    Parte del sistema <a href="https://giorgiogoldoni.github.io/raptor-wealth-meridian">RAPTOR WEALTH MERIDIAN</a><br>
+    ⚠ I segnali sono indicatori quantitativi di sentiment e non costituiscono consulenza finanziaria né raccomandazione di investimento.
+  </footer>
+
+</div>
+
+<script>
+// ─── UTILS ───────────────────────────────────────────────────
+const fmtN = (v, d=2) => v != null ? (+v).toFixed(d) : '—';
+const fmtPct = p => p != null ? p.toFixed(1) + '%' : '—';
+
+function sigClass(sig) {
+  if (!sig || sig === 'N/D') return 'nd';
+  const s = sig.toUpperCase();
+  if (s.includes('FEAR') || s.includes('RISK-OFF') || s.includes('TAIL')) return 'fear';
+  if (s.includes('GREED') || s.includes('RISK-ON') || s.includes('COMP')) return 'greed';
+  return 'neutral';
+}
+
+function regimeColor(r) {
+  const m = {'RISK-ON':'green','POSITIVO':'green','NEUTRO':'yellow','CAUTO':'orange','RISK-OFF':'red'};
+  return m[r] || 'yellow';
+}
+
+function ma(arr, n) {
+  return arr.map((_,i) => {
+    const sl = arr.slice(Math.max(0,i-n+1),i+1).filter(v=>v!=null);
+    return sl.length ? sl.reduce((a,b)=>a+b)/sl.length : null;
+  });
+}
+
+function pctColor(pct, inverted=true) {
+  if (pct == null) return '#ccc';
+  const p = inverted ? 100-pct : pct;
+  if (p >= 70) return '#007700';
+  if (p <= 30) return '#cc0000';
+  return '#996600';
+}
+
+// ─── INTERPRETATIONS ─────────────────────────────────────────
+const INTERP = {
+  vix: v => {
+    if (v == null) return 'Dato non disponibile.';
+    if (v >= 40)  return `VIX a ${v}: panico estremo. Storicamente questi livelli corrispondono a capitolazioni di mercato — area di potenziale opportunità per investitori di lungo periodo con stomaco fermo.`;
+    if (v >= 30)  return `VIX a ${v}: stress elevato. Il mercato prezza incertezza significativa. Storicamente i ritorni a 12 mesi da questi livelli sono stati positivi, ma la volatilità a breve può restare alta.`;
+    if (v >= 20)  return `VIX a ${v}: attenzione moderata. Il mercato è in una fase di cauzione senza panico. Monitorare per possibile escalation.`;
+    if (v >= 14)  return `VIX a ${v}: calma relativa. Il mercato prezza un contesto di bassa incertezza. Storicamente area di rischio per compiacenza eccessiva.`;
+    return `VIX a ${v}: compiacenza estrema. Il mercato è molto tranquillo — storicamente precede periodi di maggiore volatilità. Segnale di attenzione contrarian.`;
+  },
+  vstoxx: v => {
+    if (v == null) return 'Dato non disponibile.';
+    if (v >= 35)  return `VSTOXX a ${v}: stress elevato sui mercati europei. L'Euro Stoxx 50 prezza alta incertezza — possibile riflesso di tensioni geopolitiche o macro nell'Eurozona.`;
+    if (v >= 22)  return `VSTOXX a ${v}: cautela moderata in Europa. I mercati europei mostrano più nervosismo della media storica.`;
+    return `VSTOXX a ${v}: mercati europei relativamente tranquilli. La volatilità implicita è nella norma storica.`;
+  },
+  skew: v => {
+    if (v == null) return 'Dato non disponibile.';
+    if (v >= 150) return `SKEW a ${v}: il mercato prezza un rischio di evento coda molto elevato. Gli operatori pagano un premio significativo per protezione da movimenti estremi al ribasso.`;
+    if (v >= 135) return `SKEW a ${v}: il mercato prezza una probabilità sopra la media di movimenti estremi. Le put OTM sono care rispetto alle call — segnale di vigilanza professionale.`;
+    if (v >= 115) return `SKEW a ${v}: rischio coda nella norma. Il mercato non prezza eventi estremi particolari.`;
+    return `SKEW a ${v}: tail risk basso. Il mercato è compiacente riguardo al rischio di eventi estremi — potenzialmente un segnale contrarian di attenzione.`;
+  },
+  pc_equity: v => {
+    if (v == null) return 'Dato non disponibile.';
+    if (v >= 0.90) return `P/C Equity a ${v}: gli operatori comprano massicciamente put di protezione. Segnale contrarian bullish — storicamente i minimi importanti coincidono con questi livelli.`;
+    if (v >= 0.75) return `P/C Equity a ${v}: sentiment ribassista diffuso. Gli operatori si stanno coprendo più del normale — possibile segnale contrarian positivo nelle prossime settimane.`;
+    if (v >= 0.55) return `P/C Equity a ${v}: equilibrio tra protezione e speculazione. Nessun segnale estremo di sentiment.`;
+    return `P/C Equity a ${v}: prevalgono le call sulle put — euforia e speculazione al rialzo. Storicamente questi livelli precedono correzioni. Segnale contrarian ribassista.`;
+  },
+  pc_total: v => {
+    if (v == null) return 'Dato non disponibile.';
+    if (v >= 1.00) return `P/C Total a ${v}: più put che call sull'intero mercato — forte segnale di difensività. Storicamente contrarian bullish.`;
+    if (v >= 0.80) return `P/C Total a ${v}: leggera prevalenza delle put. Il mercato è in modalità difensiva moderata.`;
+    if (v >= 0.65) return `P/C Total a ${v}: ratio nella norma storica. Equilibrio tra posizioni direzionali.`;
+    return `P/C Total a ${v}: prevalgono le call — sentiment speculativo elevato. Monitorare per possibile eccesso di ottimismo.`;
+  },
+  pc_index: v => {
+    if (v == null) return 'Dato non disponibile.';
+    return v >= 1.30 ?
+      `P/C Index a ${v}: gli istituzionali si stanno proteggendo aggressivamente sugli indici. Segnale di hedging professionale elevato — non necessariamente ribassista ma indica prudenza strutturale.` :
+      `P/C Index a ${v}: hedging istituzionale nella norma. Il mercato professionale non mostra coperture eccezionali.`;
+  }
+};
+
+const RATIO_META = {
+  hyg_iei:     { nome:'HYG / IEI',  desc:'High Yield vs Obbligazioni Medio Termine USA', area:'USA',    interp: (v, t) => t === 'SOPRA MA50' ? 'Il mercato del credito è in risk-on: gli investitori preferiscono bond ad alto rendimento rispetto ai titoli sicuri. Segnale positivo per l\'azionario.' : 'Il credito si muove verso la sicurezza: gli spread si allargano e gli investitori preferiscono la qualità. Segnale di cautela per gli asset rischiosi.' },
+  eem_spy:     { nome:'EEM / SPY',  desc:'Mercati Emergenti vs S&P500',                  area:'USA',    interp: (v, t) => t === 'SOPRA MA50' ? 'Gli emergenti sovraperformano l\'S&P500: dollaro debole, appetito al rischio globale alto, ciclo favorevole alle materie prime.' : 'L\'S&P500 batte gli emergenti: dollaro forte, avversione al rischio, fuga verso la qualità USA.' },
+  copper_gold: { nome:'CPER / GLD', desc:'Rame vs Oro — Crescita Reale',                 area:'USA',    interp: (v, t) => t === 'SOPRA MA50' ? 'Il rame (ciclico) batte l\'oro (rifugio): il mercato prezza crescita economica reale. Segnale positivo per equity ciclici e materie prime.' : 'L\'oro batte il rame: il mercato prezza rallentamento economico o incertezza. Favorisce difensivi e obbligazioni.' },
+  tip_ief:     { nome:'TIP / IEF',  desc:'TIPS vs Treasury — Inflazione Attesa',         area:'USA',    interp: (v, t) => t === 'SOPRA MA50' ? 'Il mercato obbligazionario prezza inflazione in aumento: i TIPS (indicizzati) sono preferiti ai nominali. Attenzione alle duration lunghe.' : 'Aspettative inflazionistiche in calo: i Treasury nominali sono preferiti ai TIPS. Favorisce bond a lunga duration.' },
+  dxy:         { nome:'DXY',        desc:'Dollaro USA Index',                             area:'USA',    interp: (v, t) => t === 'SOPRA MA50' ? 'Dollaro forte: pressione sugli emergenti e sulle commodity. Potenziale vento contrario per gli utili delle multinazionali USA.' : 'Dollaro debole: vantaggio competitivo USA, supporto per emergenti e commodity. Generalmente risk-on.' },
+  eurusd:      { nome:'EUR/USD',    desc:'Euro vs Dollaro',                               area:'Europa', interp: (v, t) => t === 'SOPRA MA50' ? 'Euro in forza relativa: segnale di stabilità nell\'Eurozona e/o debolezza del dollaro. Positivo per asset europei in valuta locale.' : 'Euro debole: competitività export europea migliorata ma possibile segnale di stress sull\'Eurozona.' },
+  yield_curve: { nome:'YC 10Y-2Y',  desc:'Spread Yield Curve USA',                       area:'USA',    interp: (v, t) => v != null && v > 0 ? `Curva positiva a ${v?.toFixed(2)}%: nessun segnale di recessione imminente. Una curva normale è storicamente associata a espansione economica.` : v != null && v <= 0 ? `Curva invertita a ${v?.toFixed(2)}%: segnale di recessione storicamente affidabile a 6-18 mesi. Non significa crollo immediato ma aumenta la cautela strutturale.` : 'Dato non disponibile.' },
+  stoxx_spy:   { nome:'STOXX / SPY',  desc:'Euro Stoxx 50 vs S&P500',          area:'Europa', interp: (v, t) => t === 'SOPRA MA50' ? 'L\'Europa sovraperforma gli USA: possibile rotazione geografica, valutazioni europee più attraenti o debolezza del dollaro.' : 'Gli USA battono l\'Europa: fuga verso la qualità americana, o divergenza nei fondamentali macroeconomici.' },
+  stoxx_eem:   { nome:'STOXX / EEM', desc:'Euro Stoxx 50 vs Mercati Emergenti', area:'Europa', interp: (v, t) => t === 'SOPRA MA50' ? 'L\'Europa sovraperforma gli emergenti: rotazione da EM verso EU.' : 'Gli emergenti battono l\'Europa: appetito per il rischio EM, possibile reflazione globale.' },
+  btp_bund:    { nome:'BTP/Bund',   desc:'Spread Periferico Europeo',                    area:'Europa', interp: () => 'Dato in sviluppo — il differenziale BTP/Bund sarà integrato in una versione futura. Attualmente monitorabile manualmente su Borsa Italiana.' },
+};
+
+// ─── MAIN RENDER ─────────────────────────────────────────────
+fetch('data/signal.json')
+  .then(r => r.json())
+  .then(d => {
+    renderTopbar(d);
+    renderComposite(d);
+    renderIndicators(d);
+    renderRatios(d);
+    renderGeoRotation(d);
+    renderProjection(d);
+    renderCharts(d);
+    renderHistory(d);
+  })
+  .catch(e => {
+    document.getElementById('comp-value').textContent = 'ERRORE';
+    console.error(e);
+  });
+
+function renderTopbar(d) {
+  const comp = d.composite || '—';
+  const el = document.getElementById('topbar-composite');
+  el.textContent = comp;
+  const colors = {'RISK-OFF':'#ff4444','CAUTO':'#ff8800','NEUTRO':'#ffcc00','POSITIVO':'#88dd44','RISK-ON':'#44dd88'};
+  el.style.color = colors[comp] || '#ffcc00';
+  document.getElementById('topbar-ts').textContent = d.updated || '';
+  document.getElementById('tb-vix').textContent = fmtN(d.latest?.vix, 1);
+  document.getElementById('tb-vstoxx').textContent = fmtN(d.latest?.vstoxx, 1);
+  document.getElementById('tb-pc').textContent = fmtN(d.latest?.pc_equity, 2);
+  document.getElementById('tb-eurusd').textContent = fmtN(d.latest?.eurusd, 3);
+}
+
+function renderComposite(d) {
+  const el = document.getElementById('comp-value');
+  el.textContent = d.composite || '—';
+  el.className = d.composite || '';
+  document.getElementById('comp-ts').textContent = (d.updated || '').replace('T', ' ');
+  const proj = d.projection || {};
+  const tops = ['breve','medio','lungo'];
+  const ids  = ['proj-short-top','proj-mid-top','proj-long-top'];
+  tops.forEach((k, i) => {
+    const el2 = document.getElementById(ids[i]);
+    const r = proj[k]?.regime || '—';
+    el2.textContent = r;
+    el2.className = 'comp-kpi-val ' + regimeColor(r);
+  });
+}
+
+function renderIndicators(d) {
+  const sigs = d.signals || {};
+  const items = [
+    { key:'vix',       label:'VIX',             unit:'', decimals:1 },
+    { key:'vstoxx',    label:'VSTOXX',           unit:'', decimals:1 },
+    { key:'skew',      label:'SKEW INDEX',       unit:'', decimals:1 },
+    { key:'pc_equity', label:'P/C RATIO EQUITY', unit:'', decimals:2 },
+    { key:'pc_total',  label:'P/C RATIO TOTAL',  unit:'', decimals:2 },
+    { key:'pc_index',  label:'P/C RATIO INDEX',  unit:'', decimals:2 },
+  ];
+  const grid = document.getElementById('ind-grid');
+  grid.innerHTML = items.map(item => {
+    const s = sigs[item.key] || {};
+    const v = s.value;
+    const cl = sigClass(s.signal);
+    const pct = s.percentile;
+    const fillW = pct != null ? pct : 0;
+    const fillC = cl === 'fear' ? '#cc0000' : cl === 'greed' ? '#007700' : '#996600';
+    const trendCl = s.trend === 'SOPRA MA50' ? 'ind-trend-up' : s.trend === 'SOTTO MA50' ? 'ind-trend-down' : '';
+    const trendSym = s.trend === 'SOPRA MA50' ? '▲' : s.trend === 'SOTTO MA50' ? '▼' : '—';
+    const interp = INTERP[item.key] ? INTERP[item.key](v) : '';
+    return `
+    <div class="ind-card">
+      <div class="ind-card-head">
+        <div class="ind-name">${item.label}</div>
+        <span class="ind-signal ${cl}">${s.signal || 'N/D'}</span>
+      </div>
+      <div class="ind-value">${v != null ? (+v).toFixed(item.decimals) : '—'}</div>
+      <div class="ind-meta">
+        <span>MA50: ${s.ma50 != null ? (+s.ma50).toFixed(item.decimals) : '—'}</span>
+        <span class="${trendCl}">${trendSym} ${s.trend || ''}</span>
+        <span>Pct: ${fmtPct(pct)}</span>
+      </div>
+      <div class="pct-wrap">
+        <div class="pct-track">
+          <div class="pct-fill" style="width:${fillW}%;background:${fillC}"></div>
+        </div>
+        <div class="pct-labels"><span>0</span><span>50</span><span>100</span></div>
+      </div>
+      <div class="ind-interp">${interp}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderRatios(d) {
+  const ratios = d.ratios || {};
+  const tbody = document.getElementById('ratio-tbody');
+  tbody.innerHTML = Object.entries(RATIO_META).map(([key, meta]) => {
+    const r = ratios[key] || {};
+    const cl = sigClass(r.signal);
+    const trendCl = r.trend === 'SOPRA MA50' ? 'ind-trend-up' : r.trend === 'SOTTO MA50' ? 'ind-trend-down' : '';
+    const trendSym = r.trend === 'SOPRA MA50' ? '▲' : r.trend === 'SOTTO MA50' ? '▼' : '—';
+    const interp = meta.interp(r.value, r.trend);
+    const decimals = key === 'copper_gold' ? 5 : key === 'eurusd' ? 3 : key === 'yield_curve' ? 2 : 3;
+    return `<tr>
+      <td><strong>${meta.nome}</strong><br><span style="color:#999;font-size:9px">${meta.area}</span></td>
+      <td class="ratio-table interp-cell">${meta.desc}</td>
+      <td class="val-cell">${r.value != null ? (+r.value).toFixed(decimals) : '—'}</td>
+      <td class="val-cell" style="color:#888">${r.ma50 != null ? (+r.ma50).toFixed(decimals) : '—'}</td>
+      <td class="trend-cell" style="text-align:center"><span class="${trendCl}">${trendSym} ${r.trend||'—'}</span></td>
+      <td class="sig-cell"><span class="pill ${cl}">${r.signal || 'N/D'}</span></td>
+      <td class="interp-cell">${interp}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderProjection(d) {
+  const proj = d.projection || {};
+  const keys = [
+    { k:'breve', icon:'◈ BREVE TERMINE' },
+    { k:'medio', icon:'◈ MEDIO TERMINE' },
+    { k:'lungo', icon:'◈ LUNGO TERMINE' },
+  ];
+  const grid = document.getElementById('proj-grid');
+  grid.innerHTML = keys.map(({k, icon}) => {
+    const p = proj[k] || {};
+    const pr = p.probabilita || {};
+    const regime = p.regime || '—';
+    const rCl = regime.replace('/','-');
+    const scoreBar = Math.max(0, Math.min(100, (p.score || 0) + 100) / 2);
+    const scoreColor = (p.score || 0) > 10 ? '#007700' : (p.score || 0) < -10 ? '#cc0000' : '#996600';
+    return `
+    <div class="proj-card">
+      <div class="proj-head">${icon} <span>— ${p.orizzonte || ''}</span></div>
+      <div class="proj-body">
+        <div class="proj-regime ${rCl}">${regime}</div>
+        <div class="proj-score">Score: <span style="color:${scoreColor};font-weight:700">${p.score > 0 ? '+' : ''}${p.score || 0}</span> / 100</div>
+        <div class="prob-bars">
+          <div class="prob-row">
+            <span class="prob-label">RISK-ON</span>
+            <div class="prob-track"><div class="prob-fill risk-on" style="width:${pr.risk_on||0}%"></div></div>
+            <span class="prob-pct" style="color:#007700">${pr.risk_on||0}%</span>
+          </div>
+          <div class="prob-row">
+            <span class="prob-label">NEUTRO</span>
+            <div class="prob-track"><div class="prob-fill neutral" style="width:${pr.neutro||0}%"></div></div>
+            <span class="prob-pct" style="color:#996600">${pr.neutro||0}%</span>
+          </div>
+          <div class="prob-row">
+            <span class="prob-label">RISK-OFF</span>
+            <div class="prob-track"><div class="prob-fill risk-off" style="width:${pr.risk_off||0}%"></div></div>
+            <span class="prob-pct" style="color:#cc0000">${pr.risk_off||0}%</span>
+          </div>
+        </div>
+        <div class="proj-driver">Driver: ${p.driver || ''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderCharts(d) {
+  const h = d.history || [];
+
+  // Filtra da inizio anno corrente
+  const yearStart = new Date().getFullYear() + '-01-01';
+  const slice = h.filter(r => r.date >= yearStart);
+  // Se pochi dati usa tutto lo storico disponibile
+  const data = slice.length >= 10 ? slice : h.slice(-90);
+  const labels = data.map(r => r.date.slice(5));
+
+  // ── UTILS ────────────────────────────────────────────────
+  const maArr = (arr, n) => arr.map((_,i) => {
+    const sl = arr.slice(Math.max(0,i-n+1),i+1).filter(v=>v!=null);
+    return sl.length ? +(sl.reduce((a,b)=>a+b)/sl.length) : null;
+  });
+
+  // Bollinger Bands — 20 periodi ±2σ
+  function bollinger(arr, n=20) {
+    const mid = maArr(arr, n);
+    const upper = arr.map((_,i) => {
+      const sl = arr.slice(Math.max(0,i-n+1),i+1).filter(v=>v!=null);
+      if (sl.length < 2) return null;
+      const m = sl.reduce((a,b)=>a+b)/sl.length;
+      const s = Math.sqrt(sl.reduce((a,b)=>a+(b-m)**2,0)/sl.length);
+      return +(m + 2*s);
+    });
+    const lower = arr.map((_,i) => {
+      const sl = arr.slice(Math.max(0,i-n+1),i+1).filter(v=>v!=null);
+      if (sl.length < 2) return null;
+      const m = sl.reduce((a,b)=>a+b)/sl.length;
+      const s = Math.sqrt(sl.reduce((a,b)=>a+(b-m)**2,0)/sl.length);
+      return +(m - 2*s);
+    });
+    return { mid, upper, lower };
+  }
+
+  // Opzioni base chart
+  const baseOpts = () => ({
+    responsive:true, maintainAspectRatio:true,
+    plugins:{
+      legend:{ display:true, labels:{
+        color:'#888', font:{family:'IBM Plex Mono', size:8},
+        boxWidth:10, padding:6,
+        filter: item => item.datasetIndex !== 2 // nasconde BB Lower dalla legenda
+      }}
+    },
+    scales:{
+      x:{ ticks:{color:'#888',font:{family:'IBM Plex Mono',size:9},maxTicksLimit:10}, grid:{color:'#e8e4dc'} },
+      y:{ ticks:{color:'#888',font:{family:'IBM Plex Mono',size:9}}, grid:{color:'#e8e4dc'} }
+    },
+    interaction:{ mode:'index', intersect:false },
+    animation:{ duration:400 }
+  });
+
+  // BB chart — usato per TUTTI i grafici
+  function mkBB(id, rawData, color) {
+    const ctx = document.getElementById(id); if(!ctx) return;
+    const bb = bollinger(rawData, 20);
+    new Chart(ctx, {
+      type:'line',
+      data:{
+        labels,
+        datasets:[
+          // BB Upper
+          { label:'BB +2σ', data:bb.upper,
+            borderColor:color+'60', borderWidth:1,
+            pointRadius:0, tension:0.3, fill:false,
+            borderDash:[4,3], order:3 },
+          // BB Mid (SMA20)
+          { label:'SMA 20', data:bb.mid,
+            borderColor:color+'aa', borderWidth:1.2,
+            pointRadius:0, tension:0.3, fill:false,
+            borderDash:[6,2], order:2 },
+          // BB Lower (fill verso upper)
+          { label:'BB -2σ', data:bb.lower,
+            borderColor:color+'60', borderWidth:1,
+            pointRadius:0, tension:0.3,
+            fill:{ target:0, above:color+'10' },
+            borderDash:[4,3], order:4 },
+          // Valore principale
+          { label:'Valore', data:rawData,
+            borderColor:color, borderWidth:2,
+            pointRadius:0, tension:0.3,
+            fill:false, order:1 }
+        ]
+      },
+      options: baseOpts()
+    });
+  }
+
+  // ── SENTIMENT — BB su tutti ───────────────────────────────
+  mkBB('ch-vix',    data.map(r=>r.vix),                          '#cc0000');
+  mkBB('ch-vstoxx', data.map(r=>r.vstoxx),                       '#cc6600');
+  mkBB('ch-pc',     maArr(data.map(r=>r.pc_equity), 10),         '#0066cc');
+
+  // ── INTERMARKET — BB su tutti ────────────────────────────
+  mkBB('ch-hyg',    data.map(r=>r.hyg_iei),    '#007700');
+  mkBB('ch-copper', data.map(r=>r.copper_gold),'#996600');
+  mkBB('ch-eurusd', data.map(r=>r.eurusd),     '#0066cc');
+  mkBB('ch-yc',     data.map(r=>r.yield_curve),'#6600cc');
+  mkBB('ch-eem',    data.map(r=>r.eem_spy),    '#cc6600');
+  mkBB('ch-tip',    data.map(r=>r.tip_ief),    '#0099aa');
+}
+
+function renderHistory(d) {
+  const rows = [...(d.history||[])].reverse();
+  document.getElementById('hist-tbody').innerHTML = rows.map(r => `
+    <tr>
+      <td>${r.date}</td>
+      <td>${fmtN(r.vix,1)}</td>
+      <td>${fmtN(r.vstoxx,1)}</td>
+      <td>${fmtN(r.pc_equity,2)}</td>
+      <td>${fmtN(r.pc_total,2)}</td>
+      <td>${fmtN(r.skew,1)}</td>
+      <td>${fmtN(r.hyg_iei,3)}</td>
+      <td>${r.copper_gold != null ? (+r.copper_gold).toFixed(5) : '—'}</td>
+      <td>${fmtN(r.eurusd,3)}</td>
+      <td>${fmtN(r.yield_curve,2)}</td>
+    </tr>`).join('');
+}
+
+function dlExcel(e) {
+  e.preventDefault();
+  fetch('data/signal.json').then(r=>r.json()).then(d => {
+    const h = d.history || [];
+    const rows = [
+      ['RAPTOR SIGNAL v2 — Export Dati'],
+      ['Aggiornato:', d.updated],
+      ['Segnale Composito:', d.composite],
+      [],
+      ['PROIEZIONE'],
+      ['Orizzonte','Regime','Score','Risk-On%','Neutro%','Risk-Off%','Driver'],
+      ...['breve','medio','lungo'].map(k => {
+        const p = d.projection?.[k] || {};
+        return [p.orizzonte, p.regime, p.score,
+                p.probabilita?.risk_on, p.probabilita?.neutro,
+                p.probabilita?.risk_off, p.driver];
+      }),
+      [],
+      ['SEGNALI CORRENTI'],
+      ['Indicatore','Valore','Segnale','Percentile','MA50','Trend'],
+      ...Object.entries(d.signals||{}).map(([k,s]) => [k, s.value, s.signal, s.percentile, s.ma50, s.trend]),
+      [],
+      ['RATIO INTERMARKET'],
+      ['Ratio','Valore','Segnale','MA50','Trend'],
+      ...Object.entries(d.ratios||{}).map(([k,r]) => [k, r.value, r.signal, r.ma50, r.trend]),
+      [],
+      ['STORICO'],
+      ['Data','VIX','VSTOXX','P/C Equity','P/C Total','P/C Index','SKEW','HYG/IEI','Copper/Gold','TIP/IEF','DXY','EUR/USD','Yield Curve','STOXX/SPY'],
+      ...h.map(r => [r.date, r.vix, r.vstoxx, r.pc_equity, r.pc_total, r.pc_index, r.skew,
+                     r.hyg_iei, r.copper_gold, r.tip_ief, r.dxy, r.eurusd, r.yield_curve, r.stoxx_spy])
+    ];
+    const csv = rows.map(r => r.join('\t')).join('\n');
+    const blob = new Blob(['\uFEFF'+csv], {type:'text/tab-separated-values;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'RAPTOR_SIGNAL_' + (d.date||'export') + '.xls';
+    a.click();
+  });
+}
+
+// ─── ROTAZIONE GEOGRAFICA ─────────────────────────────────────
+function renderGeoRotation(d) {
+  var widget = document.getElementById('geo-rotation-widget');
+  if (!widget) return;
+  var ratios = d.ratios || {};
+  var eemSpy   = ratios.eem_spy   || {};
+  var stoxxSpy = ratios.stoxx_spy || {};
+  var stoxxEem = ratios.stoxx_eem || {};
+
+  var GREEN = { bg:'#EAF3DE', border:'#97C459', text:'#3B6D11', sub:'#27500A', line:'#639922' };
+  var RED   = { bg:'#FCEBEB', border:'#F09595', text:'#A32D2D', sub:'#791F1F', line:'#E24B4A' };
+  var GRAY  = { bg:'#f8f8f5', border:'#d4d0c8', text:'#888', sub:'#888', line:'#ccc' };
+
+  function getC(sig) {
+    if (!sig || sig === 'N/D') return GRAY;
+    if (sig === 'RISK-ON' || sig === 'GREED') return GREEN;
+    if (sig === 'RISK-OFF' || sig === 'FEAR') return RED;
+    return GRAY;
+  }
+
+  function getDir(sig) {
+    if (sig === 'RISK-ON' || sig === 'GREED') return '▶';
+    if (sig === 'RISK-OFF' || sig === 'FEAR') return '◄';
+    return '◄▶';
+  }
+
+  function scoreNode(ins, outs) {
+    var s = 0;
+    for (var i=0; i<ins.length; i++) {
+      if (ins[i]==='RISK-ON'||ins[i]==='GREED') s++;
+      else if (ins[i]==='RISK-OFF'||ins[i]==='FEAR') s--;
+    }
+    for (var j=0; j<outs.length; j++) {
+      if (outs[j]==='RISK-ON'||outs[j]==='GREED') s--;
+      else if (outs[j]==='RISK-OFF'||outs[j]==='FEAR') s++;
+    }
+    return s;
+  }
+
+  function borderColor(score) {
+    if (score >= 1)  return '#3B6D11';
+    if (score <= -1) return '#A32D2D';
+    return '#d4d0c8';
+  }
+
+  function fmtVal(r) {
+    if (r.value == null) return '—';
+    var v = (+r.value).toFixed(3);
+    var ma = r.ma50 ? (+r.ma50).toFixed(3) : '—';
+    var arr = r.trend === 'SOPRA MA50' ? '▲' : r.trend === 'SOTTO MA50' ? '▼' : '≈';
+    return v + ' ' + arr + ' MA50 ' + ma;
+  }
+
+  function reading(es, ss, se) {
+    if (!es && !ss) return 'Dati insufficienti per la lettura del triangolo.';
+    if (es==='RISK-OFF' && ss==='RISK-ON' && se==='RISK-ON')
+      return 'EEM/SPY sotto MA50, STOXX/SPY e STOXX/EEM sopra MA50 → <strong>il capitale defluisce dagli emergenti verso l\u2019Europa</strong>. Gli USA cedono terreno relativo.';
+    if (es==='RISK-ON' && ss==='RISK-ON')
+      return 'EEM/SPY e STOXX/SPY entrambi sopra MA50 → <strong>il capitale esce dagli USA verso tutto il resto</strong>.' + (se==='RISK-OFF' ? ' Gli emergenti battono l\u2019Europa.' : se==='RISK-ON' ? ' L\u2019Europa batte gli emergenti.' : ' Nessuna preferenza tra Europa ed Emergenti.');
+    if (es==='RISK-ON' && ss==='RISK-OFF' && se==='RISK-OFF')
+      return 'EEM/SPY sopra MA50, STOXX/SPY e STOXX/EEM sotto MA50 → <strong>rotazione verso i mercati emergenti</strong>. Tipico di dollaro debole e ripresa globale.';
+    if (es==='RISK-OFF' && ss==='RISK-OFF')
+      return 'EEM/SPY e STOXX/SPY entrambi sotto MA50 → <strong>fuga globale verso gli USA</strong>. Il dollaro sale, tutto il resto soffre.';
+    var onN = [es,ss,se].filter(function(s){return s==='RISK-ON'||s==='GREED';}).length;
+    return onN > 1 ? '<strong>Contesto prevalentemente risk-on</strong> geografico. Il capitale si distribuisce al di fuori degli USA.' : '<strong>Contesto prevalentemente risk-off</strong> geografico. Il capitale converge verso gli USA.';
+  }
+
+  var es = eemSpy.signal, ss = stoxxSpy.signal, se = stoxxEem.signal;
+  var usaScore = scoreNode([], [es, ss]);
+  var euScore  = scoreNode([ss], [se]);
+  var emScore  = scoreNode([es], [se ? (se==='RISK-ON'?'RISK-OFF':'RISK-ON') : null]);
+  var dotColor = usaScore <= -1 ? '#E24B4A' : usaScore >= 1 ? '#639922' : '#378ADD';
+  var ces = getC(es), css2 = getC(ss), cse = getC(se);
+
+  var h = '<div style="background:#fff;border:1px solid #d4d0c8;padding:18px 22px">';
+
+  // Triangolo visivo
+  h += '<div style="display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:18px">';
+
+  // USA circle
+  h += '<div style="text-align:center">';
+  h += '<div style="width:68px;height:68px;border-radius:50%;background:#f8f8f5;border:2px solid ' + borderColor(usaScore) + ';display:flex;align-items:center;justify-content:center;margin:0 auto 5px">';
+  h += '<span style="font-size:13px;font-weight:600;color:#1a1a1a">USA</span></div>';
+  h += '<div style="font-size:9px;color:#888">S&P 500</div></div>';
+
+  // Connettore EEM/SPY
+  h += '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;margin:0 6px">';
+  h += '<div style="font-size:10px;font-weight:600;color:' + ces.text + '">' + getDir(es) + ' EEM/SPY</div>';
+  h += '<div style="height:2px;width:100%;background:' + ces.line + '"></div>';
+  h += '<div style="font-size:9px;color:' + ces.sub + '">' + (eemSpy.signal||'—') + '</div></div>';
+
+  // EU circle
+  h += '<div style="text-align:center">';
+  h += '<div style="width:68px;height:68px;border-radius:50%;background:#f8f8f5;border:2px solid ' + borderColor(euScore) + ';display:flex;align-items:center;justify-content:center;margin:0 auto 5px">';
+  h += '<span style="font-size:13px;font-weight:600;color:#1a1a1a">EU</span></div>';
+  h += '<div style="font-size:9px;color:#888">STOXX 50</div></div>';
+
+  // Connettore STOXX/EEM
+  h += '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;margin:0 6px">';
+  h += '<div style="font-size:10px;font-weight:600;color:' + cse.text + '">' + getDir(se) + ' STOXX/EEM</div>';
+  h += '<div style="height:2px;width:100%;background:' + cse.line + '"></div>';
+  h += '<div style="font-size:9px;color:' + cse.sub + '">' + (stoxxEem.signal||'—') + '</div></div>';
+
+  // EM circle
+  h += '<div style="text-align:center">';
+  h += '<div style="width:68px;height:68px;border-radius:50%;background:#f8f8f5;border:2px solid ' + borderColor(emScore) + ';display:flex;align-items:center;justify-content:center;margin:0 auto 5px">';
+  h += '<span style="font-size:13px;font-weight:600;color:#1a1a1a">EM</span></div>';
+  h += '<div style="font-size:9px;color:#888">Emergenti</div></div>';
+  h += '</div>'; // fine triangolo
+
+  // 3 card
+  h += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">';
+
+  h += '<div style="background:' + ces.bg + ';border:1px solid ' + ces.border + ';padding:9px 12px">';
+  h += '<div style="font-size:9px;color:' + ces.sub + ';letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px">EEM / SPY</div>';
+  h += '<div style="font-size:14px;font-weight:600;color:' + ces.text + ';margin-bottom:2px">' + (eemSpy.signal||'—') + '</div>';
+  h += '<div style="font-size:9px;color:' + ces.sub + '">' + fmtVal(eemSpy) + '</div></div>';
+
+  h += '<div style="background:' + css2.bg + ';border:1px solid ' + css2.border + ';padding:9px 12px">';
+  h += '<div style="font-size:9px;color:' + css2.sub + ';letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px">STOXX / SPY</div>';
+  h += '<div style="font-size:14px;font-weight:600;color:' + css2.text + ';margin-bottom:2px">' + (stoxxSpy.signal||'—') + '</div>';
+  h += '<div style="font-size:9px;color:' + css2.sub + '">' + fmtVal(stoxxSpy) + '</div></div>';
+
+  h += '<div style="background:' + cse.bg + ';border:1px solid ' + cse.border + ';padding:9px 12px">';
+  h += '<div style="font-size:9px;color:' + cse.sub + ';letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px">STOXX / EEM</div>';
+  h += '<div style="font-size:14px;font-weight:600;color:' + cse.text + ';margin-bottom:2px">' + (stoxxEem.signal||'—') + '</div>';
+  h += '<div style="font-size:9px;color:' + cse.sub + '">' + fmtVal(stoxxEem) + '</div></div>';
+  h += '</div>';
+
+  // Reading
+  h += '<div style="border-top:1px solid #e8e4dc;padding-top:10px;display:flex;align-items:flex-start;gap:9px">';
+  h += '<div style="width:8px;height:8px;border-radius:50%;background:' + dotColor + ';margin-top:3px;flex-shrink:0"></div>';
+  h += '<div style="font-size:11px;color:#444;line-height:1.6">' + reading(es, ss, se) + '</div>';
+  h += '</div>';
+
+  h += '</div>';
+  widget.innerHTML = h;
+}
+
+
+</script>
