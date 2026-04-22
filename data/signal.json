@@ -1,48 +1,48 @@
 {
-  "updated": "2026-04-21T23:39",
-  "date": "2026-04-21",
+  "updated": "2026-04-22T09:12",
+  "date": "2026-04-22",
   "composite": "CAUTO",
   "latest": {
-    "date": "2026-04-21",
-    "ts": "2026-04-21T23:39",
+    "date": "2026-04-22",
+    "ts": "2026-04-22T09:12",
     "pc_equity": null,
     "pc_total": null,
     "pc_index": null,
-    "vix": 19.5,
+    "vix": 19.21,
     "skew": 140.91,
-    "vstoxx": 25.08,
-    "stoxx50": 5982.6299,
+    "vstoxx": 24.22,
+    "stoxx50": 5930.3901,
     "hyg_iei": null,
     "eem_spy": 0.088413,
-    "copper_gold": 0.001267,
+    "copper_gold": 0.001271,
     "tip_ief": 1.165584,
-    "dxy": 98.408,
-    "eurusd": 1.1744,
+    "dxy": 98.279,
+    "eurusd": 1.1759,
     "yield_curve": 0.694,
-    "stoxx_spy": 8.497088,
-    "stoxx_eem": 96.106504,
+    "stoxx_spy": 8.422892,
+    "stoxx_eem": 95.267311,
     "btp_bund": null
   },
   "signals": {
     "vix": {
-      "value": 19.5,
-      "percentile": 48.5,
+      "value": 19.21,
+      "percentile": 44.1,
       "signal": "NEUTRAL",
-      "ma50": 21.1482,
+      "ma50": 21.0912,
       "trend": "SOTTO MA50"
     },
     "skew": {
       "value": 140.91,
-      "percentile": 93.9,
+      "percentile": 94.1,
       "signal": "FEAR",
-      "ma50": 131.9718,
+      "ma50": 132.2347,
       "trend": "SOPRA MA50"
     },
     "vstoxx": {
-      "value": 25.08,
-      "percentile": 93.8,
+      "value": 24.22,
+      "percentile": 81.8,
       "signal": "FEAR",
-      "ma50": 19.8503,
+      "ma50": 19.9827,
       "trend": "SOPRA MA50"
     },
     "pc_equity": {
@@ -77,58 +77,58 @@
     },
     "eem_spy": {
       "value": 0.088413,
-      "percentile": 3.0,
+      "percentile": 5.9,
       "signal": "RISK-OFF",
-      "ma50": 0.1782,
+      "ma50": 0.1755,
       "trend": "SOTTO MA50"
     },
     "copper_gold": {
-      "value": 0.001267,
-      "percentile": 9.1,
+      "value": 0.001271,
+      "percentile": 11.8,
       "signal": "RISK-OFF",
-      "ma50": 0.0064,
+      "ma50": 0.0063,
       "trend": "SOTTO MA50"
     },
     "tip_ief": {
       "value": 1.165584,
       "percentile": 100.0,
       "signal": "RISK-ON",
-      "ma50": 1.0479,
+      "ma50": 1.0514,
       "trend": "SOPRA MA50"
     },
     "dxy": {
-      "value": 98.408,
-      "percentile": 12.1,
+      "value": 98.279,
+      "percentile": 11.8,
       "signal": "GREED",
-      "ma50": 101.9748,
+      "ma50": 101.8661,
       "trend": "SOTTO MA50"
     },
     "eurusd": {
-      "value": 1.1744,
-      "percentile": 90.9,
+      "value": 1.1759,
+      "percentile": 91.2,
       "signal": "RISK-ON",
-      "ma50": 1.0956,
+      "ma50": 1.0979,
       "trend": "SOPRA MA50"
     },
     "yield_curve": {
       "value": 0.694,
-      "percentile": 97.0,
+      "percentile": 97.1,
       "signal": "RISK-ON",
-      "ma50": 0.3392,
+      "ma50": 0.3497,
       "trend": "SOPRA MA50"
     },
     "stoxx_spy": {
-      "value": 8.497088,
-      "percentile": 97.0,
+      "value": 8.422892,
+      "percentile": 91.2,
       "signal": "RISK-ON",
-      "ma50": 1.1065,
+      "ma50": 1.3217,
       "trend": "SOPRA MA50"
     },
     "stoxx_eem": {
-      "value": 96.106504,
-      "percentile": 100.0,
+      "value": 95.267311,
+      "percentile": 94.1,
       "signal": "RISK-ON",
-      "ma50": 11.9466,
+      "ma50": 14.3972,
       "trend": "SOPRA MA50"
     },
     "btp_bund": {
@@ -866,6 +866,27 @@
       "yield_curve": 0.694,
       "stoxx_spy": 8.497088,
       "stoxx_eem": 96.106504,
+      "btp_bund": null
+    },
+    {
+      "date": "2026-04-22",
+      "ts": "2026-04-22T09:12",
+      "pc_equity": null,
+      "pc_total": null,
+      "pc_index": null,
+      "vix": 19.21,
+      "skew": 140.91,
+      "vstoxx": 24.22,
+      "stoxx50": 5930.3901,
+      "hyg_iei": null,
+      "eem_spy": 0.088413,
+      "copper_gold": 0.001271,
+      "tip_ief": 1.165584,
+      "dxy": 98.279,
+      "eurusd": 1.1759,
+      "yield_curve": 0.694,
+      "stoxx_spy": 8.422892,
+      "stoxx_eem": 95.267311,
       "btp_bund": null
     }
   ]
