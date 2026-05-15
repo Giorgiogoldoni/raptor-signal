@@ -1,13 +1,13 @@
 {
-  "updated": "2026-05-15T21:34",
+  "updated": "2026-05-15T23:57",
   "date": "2026-05-15",
   "composite": "NEUTRO",
   "latest": {
     "date": "2026-05-15",
-    "ts": "2026-05-15T21:34",
+    "ts": "2026-05-15T23:57",
     "pc_equity": 2.5,
-    "pc_total": null,
-    "pc_index": null,
+    "pc_total": 0.67,
+    "pc_index": 0.93,
     "vix": 18.43,
     "skew": 145.77,
     "vstoxx": 18.82,
@@ -53,18 +53,18 @@
       "trend": "SOPRA MA50"
     },
     "pc_total": {
-      "value": null,
-      "percentile": null,
-      "signal": "N/D",
-      "ma50": 0.795,
-      "trend": null
+      "value": 0.67,
+      "percentile": 10.0,
+      "signal": "GREED",
+      "ma50": 0.7907,
+      "trend": "SOTTO MA50"
     },
     "pc_index": {
-      "value": null,
-      "percentile": null,
-      "signal": "N/D",
-      "ma50": 1.1071,
-      "trend": null
+      "value": 0.93,
+      "percentile": 10.0,
+      "signal": "GREED",
+      "ma50": 1.101,
+      "trend": "SOTTO MA50"
     }
   },
   "ratios": {
@@ -142,12 +142,12 @@
   "projection": {
     "breve": {
       "orizzonte": "2-4 settimane",
-      "score": -37.5,
-      "regime": "RISK-OFF",
+      "score": -18.8,
+      "regime": "CAUTO",
       "probabilita": {
-        "risk_on": 19,
-        "neutro": 53,
-        "risk_off": 28
+        "risk_on": 24,
+        "neutro": 52,
+        "risk_off": 24
       },
       "driver": "VIX \u00b7 P/C Ratio \u00b7 SKEW \u00b7 VSTOXX"
     },
@@ -1227,10 +1227,10 @@
     },
     {
       "date": "2026-05-15",
-      "ts": "2026-05-15T21:34",
+      "ts": "2026-05-15T23:57",
       "pc_equity": 2.5,
-      "pc_total": null,
-      "pc_index": null,
+      "pc_total": 0.67,
+      "pc_index": 0.93,
       "vix": 18.43,
       "skew": 145.77,
       "vstoxx": 18.82,
