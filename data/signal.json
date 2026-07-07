@@ -1,48 +1,48 @@
 {
-  "updated": "2026-07-06T21:55",
-  "date": "2026-07-06",
+  "updated": "2026-07-07T00:11",
+  "date": "2026-07-07",
   "composite": "NEUTRO",
   "latest": {
-    "date": "2026-07-06",
-    "ts": "2026-07-06T21:55",
+    "date": "2026-07-07",
+    "ts": "2026-07-07T00:11",
     "pc_equity": 2.5,
     "pc_total": null,
     "pc_index": null,
     "vix": 15.57,
     "skew": 145.38,
-    "vstoxx": 13.23,
-    "stoxx50": 6398.0098,
+    "vstoxx": 13.44,
+    "stoxx50": 6412.6802,
     "hyg_iei": null,
     "eem_spy": 0.08994,
-    "copper_gold": 0.001486,
+    "copper_gold": 0.001497,
     "tip_ief": 1.151943,
-    "dxy": 100.869,
-    "eurusd": 1.1447,
+    "dxy": 100.872,
+    "eurusd": 1.1444,
     "yield_curve": 0.789,
-    "stoxx_spy": 8.516146,
-    "stoxx_eem": 94.687136,
+    "stoxx_spy": 8.535673,
+    "stoxx_eem": 94.90425,
     "btp_bund": null
   },
   "signals": {
     "vix": {
       "value": 15.57,
-      "percentile": 5.3,
+      "percentile": 6.3,
       "signal": "GREED",
-      "ma50": 17.4442,
+      "ma50": 17.414,
       "trend": "SOTTO MA50"
     },
     "skew": {
       "value": 145.38,
-      "percentile": 88.3,
+      "percentile": 88.4,
       "signal": "FEAR",
-      "ma50": 142.6374,
+      "ma50": 142.8228,
       "trend": "SOPRA MA50"
     },
     "vstoxx": {
-      "value": 13.23,
-      "percentile": 19.4,
-      "signal": "GREED",
-      "ma50": 15.6072,
+      "value": 13.44,
+      "percentile": 26.6,
+      "signal": "NEUTRAL",
+      "ma50": 15.389,
       "trend": "SOTTO MA50"
     },
     "pc_equity": {
@@ -77,58 +77,58 @@
     },
     "eem_spy": {
       "value": 0.08994,
-      "percentile": 34.0,
+      "percentile": 34.7,
       "signal": "NEUTRAL",
       "ma50": 0.0907,
       "trend": "SOTTO MA50"
     },
     "copper_gold": {
-      "value": 0.001486,
-      "percentile": 47.9,
+      "value": 0.001497,
+      "percentile": 53.7,
       "signal": "NEUTRAL",
       "ma50": 0.0015,
       "trend": "SOTTO MA50"
     },
     "tip_ief": {
       "value": 1.151943,
-      "percentile": 36.2,
+      "percentile": 36.8,
       "signal": "NEUTRAL",
-      "ma50": 1.1663,
+      "ma50": 1.1659,
       "trend": "SOTTO MA50"
     },
     "dxy": {
-      "value": 100.869,
-      "percentile": 60.6,
+      "value": 100.872,
+      "percentile": 62.1,
       "signal": "NEUTRAL",
-      "ma50": 99.8561,
+      "ma50": 99.9087,
       "trend": "SOPRA MA50"
     },
     "eurusd": {
-      "value": 1.1447,
-      "percentile": 44.7,
+      "value": 1.1444,
+      "percentile": 44.2,
       "signal": "NEUTRAL",
-      "ma50": 1.156,
+      "ma50": 1.1555,
       "trend": "SOTTO MA50"
     },
     "yield_curve": {
       "value": 0.789,
-      "percentile": 52.1,
+      "percentile": 52.6,
       "signal": "NEUTRAL",
-      "ma50": 0.8504,
+      "ma50": 0.8503,
       "trend": "SOTTO MA50"
     },
     "stoxx_spy": {
-      "value": 8.516146,
-      "percentile": 93.6,
+      "value": 8.535673,
+      "percentile": 94.7,
       "signal": "RISK-ON",
-      "ma50": 8.2167,
+      "ma50": 8.2227,
       "trend": "SOPRA MA50"
     },
     "stoxx_eem": {
-      "value": 94.687136,
-      "percentile": 91.5,
+      "value": 94.90425,
+      "percentile": 92.6,
       "signal": "RISK-ON",
-      "ma50": 90.6302,
+      "ma50": 90.7181,
       "trend": "SOPRA MA50"
     },
     "btp_bund": {
@@ -142,12 +142,12 @@
   "projection": {
     "breve": {
       "orizzonte": "2-4 settimane",
-      "score": 6.2,
-      "regime": "POSITIVO",
+      "score": -6.2,
+      "regime": "CAUTO",
       "probabilita": {
-        "risk_on": 32,
-        "neutro": 49,
-        "risk_off": 19
+        "risk_on": 28,
+        "neutro": 51,
+        "risk_off": 21
       },
       "driver": "VIX \u00b7 P/C Ratio \u00b7 SKEW \u00b7 VSTOXX"
     },
@@ -2147,6 +2147,27 @@
       "yield_curve": 0.789,
       "stoxx_spy": 8.516146,
       "stoxx_eem": 94.687136,
+      "btp_bund": null
+    },
+    {
+      "date": "2026-07-07",
+      "ts": "2026-07-07T00:11",
+      "pc_equity": 2.5,
+      "pc_total": null,
+      "pc_index": null,
+      "vix": 15.57,
+      "skew": 145.38,
+      "vstoxx": 13.44,
+      "stoxx50": 6412.6802,
+      "hyg_iei": null,
+      "eem_spy": 0.08994,
+      "copper_gold": 0.001497,
+      "tip_ief": 1.151943,
+      "dxy": 100.872,
+      "eurusd": 1.1444,
+      "yield_curve": 0.789,
+      "stoxx_spy": 8.535673,
+      "stoxx_eem": 94.90425,
       "btp_bund": null
     }
   ]
