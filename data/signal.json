@@ -1,26 +1,26 @@
 {
-  "updated": "2026-08-20T20:56",
+  "updated": "2026-08-20T23:27",
   "date": "2026-08-20",
   "composite": "NEUTRO",
   "latest": {
     "date": "2026-08-20",
-    "ts": "2026-08-20T20:56",
+    "ts": "2026-08-20T23:27",
     "pc_equity": 2.5,
     "pc_total": null,
     "pc_index": null,
     "vix": 16.01,
-    "skew": 142.93,
-    "vstoxx": 11.16,
-    "stoxx50": 6422.0601,
+    "skew": 143.23,
+    "vstoxx": 11.29,
+    "stoxx50": 6444.46,
     "hyg_iei": null,
     "eem_spy": 0.087359,
-    "copper_gold": 0.001418,
+    "copper_gold": 0.001414,
     "tip_ief": 1.156129,
-    "dxy": 98.862,
-    "eurusd": 1.1682,
+    "dxy": 98.841,
+    "eurusd": 1.169,
     "yield_curve": 0.993,
-    "stoxx_spy": 8.421269,
-    "stoxx_eem": 96.39838,
+    "stoxx_spy": 8.450643,
+    "stoxx_eem": 96.734614,
     "btp_bund": null
   },
   "signals": {
@@ -32,17 +32,17 @@
       "trend": "SOTTO MA50"
     },
     "skew": {
-      "value": 142.93,
-      "percentile": 67.7,
+      "value": 143.23,
+      "percentile": 70.8,
       "signal": "NEUTRAL",
-      "ma50": 143.2186,
-      "trend": "SOTTO MA50"
+      "ma50": 143.2246,
+      "trend": "SOPRA MA50"
     },
     "vstoxx": {
-      "value": 11.16,
-      "percentile": 3.9,
+      "value": 11.29,
+      "percentile": 4.7,
       "signal": "GREED",
-      "ma50": 13.2546,
+      "ma50": 13.2572,
       "trend": "SOTTO MA50"
     },
     "pc_equity": {
@@ -83,8 +83,8 @@
       "trend": "SOTTO MA50"
     },
     "copper_gold": {
-      "value": 0.001418,
-      "percentile": 25.4,
+      "value": 0.001414,
+      "percentile": 23.1,
       "signal": "NEUTRAL",
       "ma50": 0.0015,
       "trend": "SOTTO MA50"
@@ -97,17 +97,17 @@
       "trend": "SOPRA MA50"
     },
     "dxy": {
-      "value": 98.862,
-      "percentile": 17.7,
+      "value": 98.841,
+      "percentile": 16.2,
       "signal": "GREED",
-      "ma50": 100.6254,
+      "ma50": 100.625,
       "trend": "SOTTO MA50"
     },
     "eurusd": {
-      "value": 1.1682,
-      "percentile": 84.6,
+      "value": 1.169,
+      "percentile": 86.2,
       "signal": "RISK-ON",
-      "ma50": 1.1464,
+      "ma50": 1.1465,
       "trend": "SOPRA MA50"
     },
     "yield_curve": {
@@ -118,18 +118,18 @@
       "trend": "SOPRA MA50"
     },
     "stoxx_spy": {
-      "value": 8.421269,
-      "percentile": 71.5,
+      "value": 8.450643,
+      "percentile": 75.4,
       "signal": "NEUTRAL",
-      "ma50": 8.4515,
+      "ma50": 8.4521,
       "trend": "SOTTO MA50"
     },
     "stoxx_eem": {
-      "value": 96.39838,
+      "value": 96.734614,
       "percentile": 76.9,
       "signal": "NEUTRAL",
-      "ma50": 96.5844,
-      "trend": "SOTTO MA50"
+      "ma50": 96.5912,
+      "trend": "SOPRA MA50"
     },
     "btp_bund": {
       "value": null,
@@ -2886,23 +2886,23 @@
     },
     {
       "date": "2026-08-20",
-      "ts": "2026-08-20T20:56",
+      "ts": "2026-08-20T23:27",
       "pc_equity": 2.5,
       "pc_total": null,
       "pc_index": null,
       "vix": 16.01,
-      "skew": 142.93,
-      "vstoxx": 11.16,
-      "stoxx50": 6422.0601,
+      "skew": 143.23,
+      "vstoxx": 11.29,
+      "stoxx50": 6444.46,
       "hyg_iei": null,
       "eem_spy": 0.087359,
-      "copper_gold": 0.001418,
+      "copper_gold": 0.001414,
       "tip_ief": 1.156129,
-      "dxy": 98.862,
-      "eurusd": 1.1682,
+      "dxy": 98.841,
+      "eurusd": 1.169,
       "yield_curve": 0.993,
-      "stoxx_spy": 8.421269,
-      "stoxx_eem": 96.39838,
+      "stoxx_spy": 8.450643,
+      "stoxx_eem": 96.734614,
       "btp_bund": null
     }
   ]
