@@ -1,34 +1,34 @@
 {
-  "updated": "2026-10-08T02:35",
+  "updated": "2026-10-08T15:03",
   "date": "2026-10-08",
   "composite": "NEUTRO",
   "latest": {
     "date": "2026-10-08",
-    "ts": "2026-10-08T02:35",
+    "ts": "2026-10-08T15:03",
     "pc_equity": 2.5,
     "pc_total": null,
     "pc_index": null,
-    "vix": 15.08,
+    "vix": 15.3,
     "skew": 141.84,
-    "vstoxx": 13.6,
-    "stoxx50": 6180.29,
+    "vstoxx": 13.58,
+    "stoxx50": 6154.29,
     "hyg_iei": null,
-    "eem_spy": 0.086681,
-    "copper_gold": 0.001623,
-    "tip_ief": 1.16979,
-    "dxy": 102.161,
-    "eurusd": 1.1211,
-    "yield_curve": 1.24,
-    "stoxx_spy": 7.95179,
-    "stoxx_eem": 91.73653,
+    "eem_spy": 0.085643,
+    "copper_gold": 0.001594,
+    "tip_ief": 1.17107,
+    "dxy": 102.159,
+    "eurusd": 1.121,
+    "yield_curve": 1.251,
+    "stoxx_spy": 7.939011,
+    "stoxx_eem": 92.699051,
     "btp_bund": null
   },
   "signals": {
     "vix": {
-      "value": 15.08,
-      "percentile": 12.9,
+      "value": 15.3,
+      "percentile": 18.1,
       "signal": "GREED",
-      "ma50": 15.411,
+      "ma50": 15.4154,
       "trend": "SOTTO MA50"
     },
     "skew": {
@@ -39,10 +39,10 @@
       "trend": "SOTTO MA50"
     },
     "vstoxx": {
-      "value": 13.6,
-      "percentile": 47.1,
+      "value": 13.58,
+      "percentile": 46.5,
       "signal": "NEUTRAL",
-      "ma50": 10.492,
+      "ma50": 10.4916,
       "trend": "SOPRA MA50"
     },
     "pc_equity": {
@@ -76,59 +76,59 @@
       "trend": null
     },
     "eem_spy": {
-      "value": 0.086681,
-      "percentile": 15.2,
+      "value": 0.085643,
+      "percentile": 7.6,
       "signal": "RISK-OFF",
       "ma50": 0.0875,
       "trend": "SOTTO MA50"
     },
     "copper_gold": {
-      "value": 0.001623,
-      "percentile": 82.5,
+      "value": 0.001594,
+      "percentile": 80.7,
       "signal": "RISK-ON",
       "ma50": 0.0015,
       "trend": "SOPRA MA50"
     },
     "tip_ief": {
-      "value": 1.16979,
-      "percentile": 83.0,
+      "value": 1.17107,
+      "percentile": 84.8,
       "signal": "RISK-ON",
       "ma50": 1.1593,
       "trend": "SOPRA MA50"
     },
     "dxy": {
-      "value": 102.161,
+      "value": 102.159,
       "percentile": 88.9,
       "signal": "FEAR",
       "ma50": 100.0758,
       "trend": "SOPRA MA50"
     },
     "eurusd": {
-      "value": 1.1211,
+      "value": 1.121,
       "percentile": 18.1,
       "signal": "RISK-OFF",
       "ma50": 1.1507,
       "trend": "SOTTO MA50"
     },
     "yield_curve": {
-      "value": 1.24,
+      "value": 1.251,
       "percentile": 96.5,
       "signal": "RISK-ON",
-      "ma50": 1.0625,
+      "ma50": 1.0627,
       "trend": "SOPRA MA50"
     },
     "stoxx_spy": {
-      "value": 7.95179,
-      "percentile": 22.2,
+      "value": 7.939011,
+      "percentile": 21.1,
       "signal": "NEUTRAL",
-      "ma50": 8.2817,
+      "ma50": 8.2814,
       "trend": "SOTTO MA50"
     },
     "stoxx_eem": {
-      "value": 91.73653,
-      "percentile": 43.3,
+      "value": 92.699051,
+      "percentile": 50.3,
       "signal": "NEUTRAL",
-      "ma50": 94.6574,
+      "ma50": 94.6767,
       "trend": "SOTTO MA50"
     },
     "btp_bund": {
@@ -3747,23 +3747,23 @@
     },
     {
       "date": "2026-10-08",
-      "ts": "2026-10-08T02:35",
+      "ts": "2026-10-08T15:03",
       "pc_equity": 2.5,
       "pc_total": null,
       "pc_index": null,
-      "vix": 15.08,
+      "vix": 15.3,
       "skew": 141.84,
-      "vstoxx": 13.6,
-      "stoxx50": 6180.29,
+      "vstoxx": 13.58,
+      "stoxx50": 6154.29,
       "hyg_iei": null,
-      "eem_spy": 0.086681,
-      "copper_gold": 0.001623,
-      "tip_ief": 1.16979,
-      "dxy": 102.161,
-      "eurusd": 1.1211,
-      "yield_curve": 1.24,
-      "stoxx_spy": 7.95179,
-      "stoxx_eem": 91.73653,
+      "eem_spy": 0.085643,
+      "copper_gold": 0.001594,
+      "tip_ief": 1.17107,
+      "dxy": 102.159,
+      "eurusd": 1.121,
+      "yield_curve": 1.251,
+      "stoxx_spy": 7.939011,
+      "stoxx_eem": 92.699051,
       "btp_bund": null
     }
   ]
