@@ -1,34 +1,34 @@
 {
-  "updated": "2026-10-13T15:23",
+  "updated": "2026-10-13T20:04",
   "date": "2026-10-13",
   "composite": "CAUTO",
   "latest": {
     "date": "2026-10-13",
-    "ts": "2026-10-13T15:23",
+    "ts": "2026-10-13T20:04",
     "pc_equity": 2.5,
     "pc_total": null,
     "pc_index": null,
-    "vix": 15.32,
+    "vix": 15.31,
     "skew": 155.06,
-    "vstoxx": 12.74,
-    "stoxx50": 6170.3799,
+    "vstoxx": 12.76,
+    "stoxx50": 6167.0098,
     "hyg_iei": null,
-    "eem_spy": 0.084361,
-    "copper_gold": 0.001608,
-    "tip_ief": 1.16796,
-    "dxy": 102.235,
-    "eurusd": 1.1197,
-    "yield_curve": 1.158,
-    "stoxx_spy": 7.941747,
-    "stoxx_eem": 94.139597,
+    "eem_spy": 0.084506,
+    "copper_gold": 0.001606,
+    "tip_ief": 1.167746,
+    "dxy": 102.196,
+    "eurusd": 1.1202,
+    "yield_curve": 1.16,
+    "stoxx_spy": 7.926238,
+    "stoxx_eem": 93.794826,
     "btp_bund": null
   },
   "signals": {
     "vix": {
-      "value": 15.32,
-      "percentile": 21.7,
+      "value": 15.31,
+      "percentile": 20.6,
       "signal": "NEUTRAL",
-      "ma50": 15.4244,
+      "ma50": 15.4242,
       "trend": "SOTTO MA50"
     },
     "skew": {
@@ -39,10 +39,10 @@
       "trend": "SOPRA MA50"
     },
     "vstoxx": {
-      "value": 12.74,
+      "value": 12.76,
       "percentile": 31.6,
       "signal": "NEUTRAL",
-      "ma50": 10.6338,
+      "ma50": 10.6342,
       "trend": "SOPRA MA50"
     },
     "pc_equity": {
@@ -76,59 +76,59 @@
       "trend": null
     },
     "eem_spy": {
-      "value": 0.084361,
+      "value": 0.084506,
       "percentile": 2.3,
       "signal": "RISK-OFF",
       "ma50": 0.0875,
       "trend": "SOTTO MA50"
     },
     "copper_gold": {
-      "value": 0.001608,
+      "value": 0.001606,
       "percentile": 82.3,
       "signal": "RISK-ON",
       "ma50": 0.0015,
       "trend": "SOPRA MA50"
     },
     "tip_ief": {
-      "value": 1.16796,
-      "percentile": 78.3,
+      "value": 1.167746,
+      "percentile": 77.1,
       "signal": "NEUTRAL",
       "ma50": 1.1607,
       "trend": "SOPRA MA50"
     },
     "dxy": {
-      "value": 102.235,
-      "percentile": 89.1,
+      "value": 102.196,
+      "percentile": 87.4,
       "signal": "FEAR",
-      "ma50": 100.2696,
+      "ma50": 100.2688,
       "trend": "SOPRA MA50"
     },
     "eurusd": {
-      "value": 1.1197,
-      "percentile": 17.7,
+      "value": 1.1202,
+      "percentile": 18.3,
       "signal": "RISK-OFF",
       "ma50": 1.148,
       "trend": "SOTTO MA50"
     },
     "yield_curve": {
-      "value": 1.158,
+      "value": 1.16,
       "percentile": 92.0,
       "signal": "RISK-ON",
       "ma50": 1.079,
       "trend": "SOPRA MA50"
     },
     "stoxx_spy": {
-      "value": 7.941747,
-      "percentile": 22.3,
+      "value": 7.926238,
+      "percentile": 21.1,
       "signal": "NEUTRAL",
-      "ma50": 8.2404,
+      "ma50": 8.2401,
       "trend": "SOTTO MA50"
     },
     "stoxx_eem": {
-      "value": 94.139597,
-      "percentile": 65.7,
+      "value": 93.794826,
+      "percentile": 63.4,
       "signal": "NEUTRAL",
-      "ma50": 94.2057,
+      "ma50": 94.1988,
       "trend": "SOTTO MA50"
     },
     "btp_bund": {
@@ -3831,23 +3831,23 @@
     },
     {
       "date": "2026-10-13",
-      "ts": "2026-10-13T15:23",
+      "ts": "2026-10-13T20:04",
       "pc_equity": 2.5,
       "pc_total": null,
       "pc_index": null,
-      "vix": 15.32,
+      "vix": 15.31,
       "skew": 155.06,
-      "vstoxx": 12.74,
-      "stoxx50": 6170.3799,
+      "vstoxx": 12.76,
+      "stoxx50": 6167.0098,
       "hyg_iei": null,
-      "eem_spy": 0.084361,
-      "copper_gold": 0.001608,
-      "tip_ief": 1.16796,
-      "dxy": 102.235,
-      "eurusd": 1.1197,
-      "yield_curve": 1.158,
-      "stoxx_spy": 7.941747,
-      "stoxx_eem": 94.139597,
+      "eem_spy": 0.084506,
+      "copper_gold": 0.001606,
+      "tip_ief": 1.167746,
+      "dxy": 102.196,
+      "eurusd": 1.1202,
+      "yield_curve": 1.16,
+      "stoxx_spy": 7.926238,
+      "stoxx_eem": 93.794826,
       "btp_bund": null
     }
   ]
