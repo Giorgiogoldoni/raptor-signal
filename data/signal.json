@@ -1,48 +1,48 @@
 {
-  "updated": "2026-10-23T18:05",
+  "updated": "2026-10-23T23:20",
   "date": "2026-10-23",
   "composite": "CAUTO",
   "latest": {
     "date": "2026-10-23",
-    "ts": "2026-10-23T18:05",
+    "ts": "2026-10-23T23:20",
     "pc_equity": 2.5,
     "pc_total": null,
     "pc_index": null,
-    "vix": 20.03,
-    "skew": 152.39,
-    "vstoxx": 13.39,
-    "stoxx50": 6068.2202,
+    "vix": 19.45,
+    "skew": 151.8,
+    "vstoxx": 13.69,
+    "stoxx50": 6087.0098,
     "hyg_iei": null,
-    "eem_spy": 0.081464,
+    "eem_spy": 0.081595,
     "copper_gold": 0.00162,
-    "tip_ief": 1.166658,
-    "dxy": 101.808,
-    "eurusd": 1.1197,
-    "yield_curve": 0.951,
-    "stoxx_spy": 7.978411,
-    "stoxx_eem": 97.937705,
+    "tip_ief": 1.166831,
+    "dxy": 101.752,
+    "eurusd": 1.1204,
+    "yield_curve": 0.956,
+    "stoxx_spy": 8.00954,
+    "stoxx_eem": 98.161745,
     "btp_bund": null
   },
   "signals": {
     "vix": {
-      "value": 20.03,
-      "percentile": 89.1,
+      "value": 19.45,
+      "percentile": 85.9,
       "signal": "FEAR",
-      "ma50": 15.963,
+      "ma50": 15.9514,
       "trend": "SOPRA MA50"
     },
     "skew": {
-      "value": 152.39,
-      "percentile": 93.5,
+      "value": 151.8,
+      "percentile": 91.3,
       "signal": "FEAR",
-      "ma50": 149.3802,
+      "ma50": 149.3684,
       "trend": "SOPRA MA50"
     },
     "vstoxx": {
-      "value": 13.39,
-      "percentile": 46.4,
+      "value": 13.69,
+      "percentile": 50.3,
       "signal": "NEUTRAL",
-      "ma50": 11.024,
+      "ma50": 11.03,
       "trend": "SOPRA MA50"
     },
     "pc_equity": {
@@ -76,7 +76,7 @@
       "trend": null
     },
     "eem_spy": {
-      "value": 0.081464,
+      "value": 0.081595,
       "percentile": 1.1,
       "signal": "RISK-OFF",
       "ma50": 0.0867,
@@ -90,45 +90,45 @@
       "trend": "SOPRA MA50"
     },
     "tip_ief": {
-      "value": 1.166658,
+      "value": 1.166831,
       "percentile": 72.3,
       "signal": "NEUTRAL",
       "ma50": 1.1634,
       "trend": "SOPRA MA50"
     },
     "dxy": {
-      "value": 101.808,
-      "percentile": 81.0,
-      "signal": "FEAR",
-      "ma50": 100.761,
+      "value": 101.752,
+      "percentile": 79.3,
+      "signal": "NEUTRAL",
+      "ma50": 100.7599,
       "trend": "SOPRA MA50"
     },
     "eurusd": {
-      "value": 1.1197,
-      "percentile": 17.4,
+      "value": 1.1204,
+      "percentile": 18.5,
       "signal": "RISK-OFF",
       "ma50": 1.1404,
       "trend": "SOTTO MA50"
     },
     "yield_curve": {
-      "value": 0.951,
-      "percentile": 60.3,
+      "value": 0.956,
+      "percentile": 61.4,
       "signal": "NEUTRAL",
-      "ma50": 1.0854,
+      "ma50": 1.0855,
       "trend": "SOTTO MA50"
     },
     "stoxx_spy": {
-      "value": 7.978411,
-      "percentile": 26.1,
+      "value": 8.00954,
+      "percentile": 29.9,
       "signal": "NEUTRAL",
-      "ma50": 8.166,
+      "ma50": 8.1666,
       "trend": "SOTTO MA50"
     },
     "stoxx_eem": {
-      "value": 97.937705,
-      "percentile": 87.0,
+      "value": 98.161745,
+      "percentile": 89.7,
       "signal": "RISK-ON",
-      "ma50": 94.2424,
+      "ma50": 94.2469,
       "trend": "SOPRA MA50"
     },
     "btp_bund": {
@@ -4020,23 +4020,23 @@
     },
     {
       "date": "2026-10-23",
-      "ts": "2026-10-23T18:05",
+      "ts": "2026-10-23T23:20",
       "pc_equity": 2.5,
       "pc_total": null,
       "pc_index": null,
-      "vix": 20.03,
-      "skew": 152.39,
-      "vstoxx": 13.39,
-      "stoxx50": 6068.2202,
+      "vix": 19.45,
+      "skew": 151.8,
+      "vstoxx": 13.69,
+      "stoxx50": 6087.0098,
       "hyg_iei": null,
-      "eem_spy": 0.081464,
+      "eem_spy": 0.081595,
       "copper_gold": 0.00162,
-      "tip_ief": 1.166658,
-      "dxy": 101.808,
-      "eurusd": 1.1197,
-      "yield_curve": 0.951,
-      "stoxx_spy": 7.978411,
-      "stoxx_eem": 97.937705,
+      "tip_ief": 1.166831,
+      "dxy": 101.752,
+      "eurusd": 1.1204,
+      "yield_curve": 0.956,
+      "stoxx_spy": 8.00954,
+      "stoxx_eem": 98.161745,
       "btp_bund": null
     }
   ]
