@@ -6,9 +6,11 @@
 <title>RAPTOR SIGNAL — Market Sentiment Engine</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans+Condensed:wght@300;400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root {
-  --bg:        #f5f5f0;
+  --bg:        #ffffff;
   --bg2:       #ffffff;
   --bg3:       #f0efe8;
   --border:    #d4d0c8;
@@ -310,6 +312,7 @@ body {
 .proj-regime.NEUTRO    { color: var(--amber); }
 .proj-regime.CAUTO     { color: #cc6600; }
 .proj-regime.RISK-OFF  { color: var(--red); }
+.proj-regime.ND        { color: var(--muted); font-size: 16px; }
 
 .proj-score {
   font-family: var(--mono);
@@ -489,20 +492,24 @@ footer a { color: var(--orange2); text-decoration:none; }
     </div>
   </div>
 
+  <!-- QUALITÀ DATI -->
+  <div class="note-box" id="dq-line" style="display:none"></div>
+
   <!-- INDICATORI SENTIMENT -->
   <div class="sec-head">
     <h2>Indicatori di Sentiment</h2>
-    <span class="sec-sub">CBOE · Yahoo Finance · Percentile 252 giorni</span>
+    <span class="sec-sub">CBOE · Yahoo Finance · Percentile 252 sedute</span>
   </div>
   <div class="ind-grid" id="ind-grid"></div>
 
   <!-- ANALISI INTERMARKET -->
   <div class="sec-head">
     <h2>Analisi Intermarket</h2>
-    <span class="sec-sub">USA + Europa · Ratio vs MA50</span>
+    <span class="sec-sub">USA + Europa · Yahoo Finance · FRED · Ratio vs MA50</span>
   </div>
   <div class="note-box">
-    I ratio intermarket confrontano la forza relativa tra asset class. Un ratio <strong>sopra la MA50</strong> indica che il numeratore è più forte del denominatore — segnale di risk-on se il numeratore è un asset rischioso. Un ratio <strong>sotto la MA50</strong> indica debolezza relativa.
+    I ratio intermarket confrontano la forza relativa tra asset class. Un ratio <strong>sopra la MA50</strong> indica che il numeratore è più forte del denominatore — segnale di risk-on se il numeratore è un asset rischioso. Un ratio <strong>sotto la MA50</strong> indica debolezza relativa.<br>
+    <strong>Attenzione:</strong> la colonna TREND confronta il valore con la MA50, mentre il SEGNALE si basa sul percentile a 252 sedute: sono due misure diverse e possono non coincidere.
   </div>
   <table class="ratio-table" id="ratio-table">
     <thead>
@@ -526,13 +533,13 @@ footer a { color: var(--orange2); text-decoration:none; }
   </div>
   <div id="geo-rotation-widget" style="margin-bottom:20px"></div>
 
-  <!-- PROIEZIONE -->
+  <!-- INDICE DI REGIME -->
   <div class="sec-head">
-    <h2>Proiezione Direzionale</h2>
+    <h2>Indice di Regime</h2>
     <span class="sec-sub">Score composito pesato · 3 orizzonti temporali</span>
   </div>
   <div class="note-box">
-    La proiezione non prevede livelli di prezzo ma stima la <strong>probabilità di regime</strong> (Risk-On / Neutro / Risk-Off) su tre orizzonti. È il risultato della combinazione ponderata di tutti gli indicatori raccolti. Non costituisce consulenza finanziaria.
+    L'indice di regime non prevede livelli di prezzo e <strong>non è una probabilità statistica</strong>: sintetizza in un punteggio da −100 a +100 la combinazione pesata dei segnali disponibili (i dati mancanti sono esclusi dal calcolo; sotto il 50% di copertura l'orizzonte è N/D). Le quote Risk-On / Neutro / Risk-Off attribuiscono l'intensità dell'indice alla direzione del segno. Pesi e soglie sono nel PDF delle regole. Non costituisce consulenza finanziaria.
   </div>
   <div class="proj-grid" id="proj-grid"></div>
 
@@ -583,6 +590,7 @@ footer a { color: var(--orange2); text-decoration:none; }
   <!-- DOWNLOAD -->
   <div class="btn-row">
     <a href="#" class="btn" onclick="dlExcel(event)">⬇ SCARICA EXCEL</a>
+    <a href="#" class="btn btn-sec" onclick="dlRules(event)">⬇ REGOLE PDF</a>
     <a href="data/signal.json" download="raptor_signal.json" class="btn btn-sec">⬇ SCARICA JSON</a>
   </div>
 
@@ -603,7 +611,7 @@ footer a { color: var(--orange2); text-decoration:none; }
           <th>HYG/IEI</th>
           <th>Cu/Au</th>
           <th>EUR/USD</th>
-          <th>YC SPREAD</th>
+          <th>YC 10Y-2Y</th>
         </tr>
       </thead>
       <tbody id="hist-tbody"></tbody>
@@ -611,8 +619,8 @@ footer a { color: var(--orange2); text-decoration:none; }
   </div>
 
   <footer>
-    RAPTOR SIGNAL v2 — Giorgio Goldoni · Consulente Finanziario Autonomo OCF<br>
-    Dati: CBOE.com · Yahoo Finance · Aggiornamento automatico 4×/giorno via GitHub Actions<br>
+    RAPTOR SIGNAL v3 — Giorgio Goldoni · Consulente Finanziario Autonomo OCF<br>
+    Dati: CBOE.com · Yahoo Finance · FRED · Aggiornamento automatico 4×/giorno via GitHub Actions (lun-ven)<br>
     Parte del sistema <a href="https://giorgiogoldoni.github.io/raptor-wealth-meridian">RAPTOR WEALTH MERIDIAN</a><br>
     ⚠ I segnali sono indicatori quantitativi di sentiment e non costituiscono consulenza finanziaria né raccomandazione di investimento.
   </footer>
@@ -698,15 +706,15 @@ const INTERP = {
 };
 
 const RATIO_META = {
-  hyg_iei:     { nome:'HYG / IEI',  desc:'High Yield vs Obbligazioni Medio Termine USA', area:'USA',    interp: (v, t) => t === 'SOPRA MA50' ? 'Il mercato del credito è in risk-on: gli investitori preferiscono bond ad alto rendimento rispetto ai titoli sicuri. Segnale positivo per l\'azionario.' : 'Il credito si muove verso la sicurezza: gli spread si allargano e gli investitori preferiscono la qualità. Segnale di cautela per gli asset rischiosi.' },
+  hyg_iei:     { nome:'HYG / IEI',  desc:'High Yield vs Obbligazioni Medio Termine (Milano EUR, in subordine USA)', area:'USA',    interp: (v, t) => t === 'SOPRA MA50' ? 'Il mercato del credito è in risk-on: gli investitori preferiscono bond ad alto rendimento rispetto ai titoli sicuri. Segnale positivo per l\'azionario.' : 'Il credito si muove verso la sicurezza: gli spread si allargano e gli investitori preferiscono la qualità. Segnale di cautela per gli asset rischiosi.' },
   eem_spy:     { nome:'EEM / SPY',  desc:'Mercati Emergenti vs S&P500',                  area:'USA',    interp: (v, t) => t === 'SOPRA MA50' ? 'Gli emergenti sovraperformano l\'S&P500: dollaro debole, appetito al rischio globale alto, ciclo favorevole alle materie prime.' : 'L\'S&P500 batte gli emergenti: dollaro forte, avversione al rischio, fuga verso la qualità USA.' },
-  copper_gold: { nome:'CPER / GLD', desc:'Rame vs Oro — Crescita Reale',                 area:'USA',    interp: (v, t) => t === 'SOPRA MA50' ? 'Il rame (ciclico) batte l\'oro (rifugio): il mercato prezza crescita economica reale. Segnale positivo per equity ciclici e materie prime.' : 'L\'oro batte il rame: il mercato prezza rallentamento economico o incertezza. Favorisce difensivi e obbligazioni.' },
+  copper_gold: { nome:'Cu / Au',    desc:'Rame vs Oro (futures HG=F / GC=F) — Crescita Reale', area:'USA',    interp: (v, t) => t === 'SOPRA MA50' ? 'Il rame (ciclico) batte l\'oro (rifugio): il mercato prezza crescita economica reale. Segnale positivo per equity ciclici e materie prime.' : 'L\'oro batte il rame: il mercato prezza rallentamento economico o incertezza. Favorisce difensivi e obbligazioni.' },
   tip_ief:     { nome:'TIP / IEF',  desc:'TIPS vs Treasury — Inflazione Attesa',         area:'USA',    interp: (v, t) => t === 'SOPRA MA50' ? 'Il mercato obbligazionario prezza inflazione in aumento: i TIPS (indicizzati) sono preferiti ai nominali. Attenzione alle duration lunghe.' : 'Aspettative inflazionistiche in calo: i Treasury nominali sono preferiti ai TIPS. Favorisce bond a lunga duration.' },
   dxy:         { nome:'DXY',        desc:'Dollaro USA Index',                             area:'USA',    interp: (v, t) => t === 'SOPRA MA50' ? 'Dollaro forte: pressione sugli emergenti e sulle commodity. Potenziale vento contrario per gli utili delle multinazionali USA.' : 'Dollaro debole: vantaggio competitivo USA, supporto per emergenti e commodity. Generalmente risk-on.' },
   eurusd:      { nome:'EUR/USD',    desc:'Euro vs Dollaro',                               area:'Europa', interp: (v, t) => t === 'SOPRA MA50' ? 'Euro in forza relativa: segnale di stabilità nell\'Eurozona e/o debolezza del dollaro. Positivo per asset europei in valuta locale.' : 'Euro debole: competitività export europea migliorata ma possibile segnale di stress sull\'Eurozona.' },
-  yield_curve: { nome:'YC 10Y-2Y',  desc:'Spread Yield Curve USA',                       area:'USA',    interp: (v, t) => v != null && v > 0 ? `Curva positiva a ${v?.toFixed(2)}%: nessun segnale di recessione imminente. Una curva normale è storicamente associata a espansione economica.` : v != null && v <= 0 ? `Curva invertita a ${v?.toFixed(2)}%: segnale di recessione storicamente affidabile a 6-18 mesi. Non significa crollo immediato ma aumenta la cautela strutturale.` : 'Dato non disponibile.' },
-  stoxx_spy:   { nome:'STOXX / SPY',  desc:'Euro Stoxx 50 vs S&P500',          area:'Europa', interp: (v, t) => t === 'SOPRA MA50' ? 'L\'Europa sovraperforma gli USA: possibile rotazione geografica, valutazioni europee più attraenti o debolezza del dollaro.' : 'Gli USA battono l\'Europa: fuga verso la qualità americana, o divergenza nei fondamentali macroeconomici.' },
-  stoxx_eem:   { nome:'STOXX / EEM', desc:'Euro Stoxx 50 vs Mercati Emergenti', area:'Europa', interp: (v, t) => t === 'SOPRA MA50' ? 'L\'Europa sovraperforma gli emergenti: rotazione da EM verso EU.' : 'Gli emergenti battono l\'Europa: appetito per il rischio EM, possibile reflazione globale.' },
+  yield_curve: { nome:'YC 10Y-2Y',  desc:'Spread Yield Curve USA (FRED T10Y2Y)',          area:'USA',    interp: (v, t) => v != null && v > 0 ? `Curva positiva a ${v?.toFixed(2)}%: nessun segnale di recessione imminente. Una curva normale è storicamente associata a espansione economica.` : v != null && v <= 0 ? `Curva invertita a ${v?.toFixed(2)}%: segnale di recessione storicamente affidabile a 6-18 mesi. Non significa crollo immediato ma aumenta la cautela strutturale.` : 'Dato non disponibile.' },
+  stoxx_spy:   { nome:'STOXX / SPY',  desc:'Euro Stoxx 50 (punti) vs S&P500 ETF (USD) — misura di tendenza', area:'Europa', interp: (v, t) => t === 'SOPRA MA50' ? 'L\'Europa sovraperforma gli USA: possibile rotazione geografica, valutazioni europee più attraenti o debolezza del dollaro.' : 'Gli USA battono l\'Europa: fuga verso la qualità americana, o divergenza nei fondamentali macroeconomici.' },
+  stoxx_eem:   { nome:'STOXX / EEM', desc:'Euro Stoxx 50 (punti) vs Mercati Emergenti ETF (USD) — misura di tendenza', area:'Europa', interp: (v, t) => t === 'SOPRA MA50' ? 'L\'Europa sovraperforma gli emergenti: rotazione da EM verso EU.' : 'Gli emergenti battono l\'Europa: appetito per il rischio EM, possibile reflazione globale.' },
   btp_bund:    { nome:'BTP/Bund',   desc:'Spread Periferico Europeo',                    area:'Europa', interp: () => 'Dato in sviluppo — il differenziale BTP/Bund sarà integrato in una versione futura. Attualmente monitorabile manualmente su Borsa Italiana.' },
 };
 
@@ -716,6 +724,7 @@ fetch('data/signal.json')
   .then(d => {
     renderTopbar(d);
     renderComposite(d);
+    renderDQ(d);
     renderIndicators(d);
     renderRatios(d);
     renderGeoRotation(d);
@@ -755,6 +764,18 @@ function renderComposite(d) {
     el2.textContent = r;
     el2.className = 'comp-kpi-val ' + regimeColor(r);
   });
+}
+
+function renderDQ(d) {
+  const q = d.data_quality, el = document.getElementById('dq-line');
+  if (!q || !el) return;
+  const miss = (q.mancanti || []).join(', ') || 'nessuna';
+  const src = q.fonti || {};
+  el.innerHTML = '<strong>Qualità dati:</strong> ' + q.disponibili + '/' + q.totale + ' serie disponibili · mancanti: ' + miss +
+    ' · fonte HYG/IEI: ' + (src.hyg_iei === 'MI' ? 'Milano (EUR)' : src.hyg_iei === 'US' ? 'USA (USD)' : 'n.d.') +
+    ' · curva 10Y-2Y: ' + (src.yield_curve === 'FRED' ? 'FRED' : 'n.d.') +
+    '<br><span style="color:#888">Un dato mancante non viene sostituito né stimato: resta N/D ed è escluso dall\'indice di regime.</span>';
+  el.style.display = 'block';
 }
 
 function renderIndicators(d) {
@@ -810,10 +831,10 @@ function renderRatios(d) {
     const trendCl = r.trend === 'SOPRA MA50' ? 'ind-trend-up' : r.trend === 'SOTTO MA50' ? 'ind-trend-down' : '';
     const trendSym = r.trend === 'SOPRA MA50' ? '▲' : r.trend === 'SOTTO MA50' ? '▼' : '—';
     const interp = meta.interp(r.value, r.trend);
-    const decimals = key === 'copper_gold' ? 5 : key === 'eurusd' ? 3 : key === 'yield_curve' ? 2 : 3;
+    const decimals = key === 'copper_gold' ? 6 : key === 'eurusd' ? 3 : key === 'yield_curve' ? 2 : key === 'hyg_iei' ? 4 : 3;
     return `<tr>
       <td><strong>${meta.nome}</strong><br><span style="color:#999;font-size:9px">${meta.area}</span></td>
-      <td class="ratio-table interp-cell">${meta.desc}</td>
+      <td class="interp-cell">${meta.desc}</td>
       <td class="val-cell">${r.value != null ? (+r.value).toFixed(decimals) : '—'}</td>
       <td class="val-cell" style="color:#888">${r.ma50 != null ? (+r.ma50).toFixed(decimals) : '—'}</td>
       <td class="trend-cell" style="text-align:center"><span class="${trendCl}">${trendSym} ${r.trend||'—'}</span></td>
@@ -835,15 +856,15 @@ function renderProjection(d) {
     const p = proj[k] || {};
     const pr = p.probabilita || {};
     const regime = p.regime || '—';
-    const rCl = regime.replace('/','-');
-    const scoreBar = Math.max(0, Math.min(100, (p.score || 0) + 100) / 2);
+    const na = regime === 'N/D' || p.score == null;
+    const rCl = na ? 'ND' : regime.replace('/','-');
     const scoreColor = (p.score || 0) > 10 ? '#007700' : (p.score || 0) < -10 ? '#cc0000' : '#996600';
-    return `
-    <div class="proj-card">
-      <div class="proj-head">${icon} <span>— ${p.orizzonte || ''}</span></div>
-      <div class="proj-body">
-        <div class="proj-regime ${rCl}">${regime}</div>
-        <div class="proj-score">Score: <span style="color:${scoreColor};font-weight:700">${p.score > 0 ? '+' : ''}${p.score || 0}</span> / 100</div>
+    const cop = p.copertura != null ? ' · copertura ' + p.copertura + '%' : '';
+    const miss = (p.dati_mancanti || []).length ? '<br>Dati mancanti: ' + p.dati_mancanti.join(', ') : '';
+    const scoreHtml = na
+      ? `<div class="proj-score">Dati insufficienti${cop}</div>`
+      : `<div class="proj-score">Indice: <span style="color:${scoreColor};font-weight:700">${p.score > 0 ? '+' : ''}${p.score}</span> / 100${cop}</div>`;
+    const barsHtml = na ? '' : `
         <div class="prob-bars">
           <div class="prob-row">
             <span class="prob-label">RISK-ON</span>
@@ -860,8 +881,14 @@ function renderProjection(d) {
             <div class="prob-track"><div class="prob-fill risk-off" style="width:${pr.risk_off||0}%"></div></div>
             <span class="prob-pct" style="color:#cc0000">${pr.risk_off||0}%</span>
           </div>
-        </div>
-        <div class="proj-driver">Driver: ${p.driver || ''}</div>
+        </div>`;
+    return `
+    <div class="proj-card">
+      <div class="proj-head">${icon} <span>— ${p.orizzonte || ''}</span></div>
+      <div class="proj-body">
+        <div class="proj-regime ${rCl}">${na ? 'DATI INSUFFICIENTI' : regime}</div>
+        ${scoreHtml}${barsHtml}
+        <div class="proj-driver">Driver: ${p.driver || ''}${miss}</div>
       </div>
     </div>`;
   }).join('');
@@ -870,11 +897,8 @@ function renderProjection(d) {
 function renderCharts(d) {
   const h = d.history || [];
 
-  // Filtra da inizio anno corrente
-  const yearStart = new Date().getFullYear() + '-01-01';
-  const slice = h.filter(r => r.date >= yearStart);
-  // Se pochi dati usa tutto lo storico disponibile
-  const data = slice.length >= 10 ? slice : h.slice(-90);
+  // Ultime 126 sedute (~6 mesi)
+  const data = h.slice(-126);
   const labels = data.map(r => r.date.slice(5));
 
   // ── UTILS ────────────────────────────────────────────────
@@ -982,49 +1006,125 @@ function renderHistory(d) {
       <td>${fmtN(r.pc_total,2)}</td>
       <td>${fmtN(r.skew,1)}</td>
       <td>${fmtN(r.hyg_iei,3)}</td>
-      <td>${r.copper_gold != null ? (+r.copper_gold).toFixed(5) : '—'}</td>
+      <td>${r.copper_gold != null ? (+r.copper_gold).toFixed(6) : '—'}</td>
       <td>${fmtN(r.eurusd,3)}</td>
       <td>${fmtN(r.yield_curve,2)}</td>
     </tr>`).join('');
 }
 
+// ─── REGOLE (da signal.json → sempre allineate al codice) ────
+function rulesToLines(R) {
+  if (!R) return [['h', 'Regole non disponibili'], ['p', 'Il file data/signal.json non contiene ancora il blocco "rules": attendere il prossimo aggiornamento dati (o lanciare il workflow) e riprovare.']];
+  const L = [];
+  const h = t => L.push(['h', t]);
+  const p = t => L.push(['p', t]);
+  h('1. Aggiornamento e fonti dati');
+  p(R.frequenza || '');
+  (R.fonti || []).forEach(f => p('- ' + f.serie + ': ' + f.fonte));
+  h('2. Calcolo dei segnali');
+  (R.calcolo_segnali || []).forEach(t => p('- ' + t));
+  h('3. Segnale composito');
+  p(R.composito || '');
+  h('4. Indice di regime (3 orizzonti)');
+  (R.indice_regime || []).forEach(t => p('- ' + t));
+  Object.entries(R.pesi || {}).forEach(([k, v]) => {
+    p(k.toUpperCase() + ' (' + v.orizzonte + '): ' + (v.componenti || []).map(c => c.nome + ' (peso ' + c.peso + ')').join(', '));
+  });
+  h('5. Soglie dei regimi');
+  (R.regimi || []).forEach(t => p('- ' + t));
+  h('6. Qualità dei dati');
+  (R.qualita_dati || []).forEach(t => p('- ' + t));
+  h('7. Limiti');
+  (R.limiti || []).forEach(t => p('- ' + t));
+  return L;
+}
+
+// Il font standard del PDF non supporta alcuni simboli: li riduco a caratteri sicuri
+function pdfSafe(s) {
+  const map = {'·':'-','→':'->','≥':'>=','≤':'<=','−':'-','–':'-','—':'-','’':"'",'‘':"'",'“':'"','”':'"','σ':'sigma','×':'x','◈':''};
+  return String(s).replace(/[·→≥≤−–—’‘“”σ×◈]/g, c => map[c]).replace(/[^\x00-\xFF]/g, '');
+}
+
+function dlRules(e) {
+  e.preventDefault();
+  fetch('data/signal.json').then(r => r.json()).then(d => {
+    if (!window.jspdf) { alert('Libreria PDF non caricata: ricarica la pagina e riprova.'); return; }
+    const doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+    const M = 15, W = 180;
+    let y = 20;
+    const room = n => { if (y + n > 280) { doc.addPage(); y = 20; } };
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(15);
+    doc.text('RAPTOR SIGNAL - Regole di calcolo', M, y); y += 7;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+    doc.text(pdfSafe('Versione regole: ' + ((d.rules && d.rules.versione) || 'n.d.') + '  |  Dati aggiornati: ' + (d.updated || 'n.d.') + ' UTC'), M, y); y += 6;
+    rulesToLines(d.rules).forEach(([t, s]) => {
+      if (t === 'h') {
+        room(14); y += 3;
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(11);
+        doc.text(pdfSafe(s), M, y); y += 6;
+      } else {
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+        const lines = doc.splitTextToSize(pdfSafe(s), W);
+        room(lines.length * 4.4);
+        doc.text(lines, M, y); y += lines.length * 4.4 + 1;
+      }
+    });
+    room(16); y += 4;
+    doc.setFont('helvetica', 'italic'); doc.setFontSize(8);
+    doc.text(doc.splitTextToSize('I segnali sono indicatori quantitativi di sentiment e non costituiscono consulenza finanziaria ne raccomandazione di investimento.', W), M, y);
+    const n = doc.getNumberOfPages();
+    for (let i = 1; i <= n; i++) {
+      doc.setPage(i); doc.setFont('helvetica', 'normal'); doc.setFontSize(8);
+      doc.text('Pag. ' + i + '/' + n, 195, 290, { align: 'right' });
+    }
+    doc.save('RAPTOR_SIGNAL_regole_' + (d.date || 'export') + '.pdf');
+  }).catch(err => { console.error(err); alert('Impossibile generare il PDF: dati non disponibili.'); });
+}
+
+// ─── EXCEL (.xlsx reale via SheetJS; fallback TSV se la libreria non carica) ──
 function dlExcel(e) {
   e.preventDefault();
-  fetch('data/signal.json').then(r=>r.json()).then(d => {
+  fetch('data/signal.json').then(r => r.json()).then(d => {
     const h = d.history || [];
-    const rows = [
-      ['RAPTOR SIGNAL v2 — Export Dati'],
+    const projRows = ['breve', 'medio', 'lungo'].map(k => {
+      const p = d.projection?.[k] || {};
+      return [k, p.orizzonte, p.regime, p.score, p.probabilita?.risk_on, p.probabilita?.neutro, p.probabilita?.risk_off, p.copertura, (p.dati_mancanti || []).join(', '), p.driver];
+    });
+    const riepilogo = [
+      ['RAPTOR SIGNAL v3 — Export Dati'],
       ['Aggiornato:', d.updated],
       ['Segnale Composito:', d.composite],
       [],
-      ['PROIEZIONE'],
-      ['Orizzonte','Regime','Score','Risk-On%','Neutro%','Risk-Off%','Driver'],
-      ...['breve','medio','lungo'].map(k => {
-        const p = d.projection?.[k] || {};
-        return [p.orizzonte, p.regime, p.score,
-                p.probabilita?.risk_on, p.probabilita?.neutro,
-                p.probabilita?.risk_off, p.driver];
-      }),
-      [],
-      ['SEGNALI CORRENTI'],
-      ['Indicatore','Valore','Segnale','Percentile','MA50','Trend'],
-      ...Object.entries(d.signals||{}).map(([k,s]) => [k, s.value, s.signal, s.percentile, s.ma50, s.trend]),
-      [],
-      ['RATIO INTERMARKET'],
-      ['Ratio','Valore','Segnale','MA50','Trend'],
-      ...Object.entries(d.ratios||{}).map(([k,r]) => [k, r.value, r.signal, r.ma50, r.trend]),
-      [],
-      ['STORICO'],
-      ['Data','VIX','VSTOXX','P/C Equity','P/C Total','P/C Index','SKEW','HYG/IEI','Copper/Gold','TIP/IEF','DXY','EUR/USD','Yield Curve','STOXX/SPY'],
-      ...h.map(r => [r.date, r.vix, r.vstoxx, r.pc_equity, r.pc_total, r.pc_index, r.skew,
-                     r.hyg_iei, r.copper_gold, r.tip_ief, r.dxy, r.eurusd, r.yield_curve, r.stoxx_spy])
+      ['INDICE DI REGIME (non è una probabilità statistica)'],
+      ['Orizzonte', 'Periodo', 'Regime', 'Indice', 'Quota Risk-On %', 'Quota Neutro %', 'Quota Risk-Off %', 'Copertura %', 'Dati mancanti', 'Driver'],
+      ...projRows
     ];
-    const csv = rows.map(r => r.join('\t')).join('\n');
-    const blob = new Blob(['\uFEFF'+csv], {type:'text/tab-separated-values;charset=utf-8'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'RAPTOR_SIGNAL_' + (d.date||'export') + '.xls';
-    a.click();
+    const segnali = [
+      ['Indicatore', 'Valore', 'Segnale', 'Percentile', 'MA50', 'Trend'],
+      ...Object.entries(d.signals || {}).map(([k, s]) => [k, s.value, s.signal, s.percentile, s.ma50, s.trend]),
+      ...Object.entries(d.ratios || {}).map(([k, r]) => [k, r.value, r.signal, r.percentile, r.ma50, r.trend])
+    ];
+    const cols = ['date','vix','vstoxx','pc_equity','pc_total','pc_index','skew','hyg_iei','hyg_iei_src','copper_gold','tip_ief','eem_spy','dxy','eurusd','yield_curve','stoxx50','stoxx_spy','stoxx_eem'];
+    const storico = [
+      ['Data','VIX','VSTOXX','P/C Equity','P/C Total','P/C Index','SKEW','HYG/IEI','Fonte HYG/IEI','Copper/Gold','TIP/IEF','EEM/SPY','DXY','EUR/USD','Yield Curve 10Y-2Y','STOXX50','STOXX/SPY','STOXX/EEM'],
+      ...h.map(r => cols.map(c => r[c] ?? ''))
+    ];
+    const regole = rulesToLines(d.rules).map(([t, s]) => t === 'h' ? [s.toUpperCase()] : [s]);
+    const fname = 'RAPTOR_SIGNAL_' + (d.date || 'export');
+
+    if (typeof XLSX === 'undefined') {
+      const csv = [...riepilogo, [], ...segnali, [], ...storico].map(r => r.join('\t')).join('\n');
+      const blob = new Blob(['\uFEFF' + csv], { type: 'text/tab-separated-values;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = fname + '.xls'; a.click();
+      return;
+    }
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(riepilogo), 'Riepilogo');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(segnali), 'Segnali');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(storico), 'Storico');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(regole), 'Regole');
+    XLSX.writeFile(wb, fname + '.xlsx');
   });
 }
 
@@ -1081,16 +1181,17 @@ function renderGeoRotation(d) {
     return v + ' ' + arr + ' MA50 ' + ma;
   }
 
+  // Il segnale (RISK-ON / RISK-OFF) deriva dal percentile a 252 sedute, non dalla MA50
   function reading(es, ss, se) {
     if (!es && !ss) return 'Dati insufficienti per la lettura del triangolo.';
     if (es==='RISK-OFF' && ss==='RISK-ON' && se==='RISK-ON')
-      return 'EEM/SPY sotto MA50, STOXX/SPY e STOXX/EEM sopra MA50 → <strong>il capitale defluisce dagli emergenti verso l\u2019Europa</strong>. Gli USA cedono terreno relativo.';
+      return 'EEM/SPY in zona bassa (RISK-OFF), STOXX/SPY e STOXX/EEM in zona alta (RISK-ON) → <strong>il capitale defluisce dagli emergenti verso l\u2019Europa</strong>. Gli USA cedono terreno relativo.';
     if (es==='RISK-ON' && ss==='RISK-ON')
-      return 'EEM/SPY e STOXX/SPY entrambi sopra MA50 → <strong>il capitale esce dagli USA verso tutto il resto</strong>.' + (se==='RISK-OFF' ? ' Gli emergenti battono l\u2019Europa.' : se==='RISK-ON' ? ' L\u2019Europa batte gli emergenti.' : ' Nessuna preferenza tra Europa ed Emergenti.');
+      return 'EEM/SPY e STOXX/SPY entrambi in zona alta (RISK-ON) → <strong>il capitale esce dagli USA verso tutto il resto</strong>.' + (se==='RISK-OFF' ? ' Gli emergenti battono l\u2019Europa.' : se==='RISK-ON' ? ' L\u2019Europa batte gli emergenti.' : ' Nessuna preferenza tra Europa ed Emergenti.');
     if (es==='RISK-ON' && ss==='RISK-OFF' && se==='RISK-OFF')
-      return 'EEM/SPY sopra MA50, STOXX/SPY e STOXX/EEM sotto MA50 → <strong>rotazione verso i mercati emergenti</strong>. Tipico di dollaro debole e ripresa globale.';
+      return 'EEM/SPY in zona alta (RISK-ON), STOXX/SPY e STOXX/EEM in zona bassa (RISK-OFF) → <strong>rotazione verso i mercati emergenti</strong>. Tipico di dollaro debole e ripresa globale.';
     if (es==='RISK-OFF' && ss==='RISK-OFF')
-      return 'EEM/SPY e STOXX/SPY entrambi sotto MA50 → <strong>fuga globale verso gli USA</strong>. Il dollaro sale, tutto il resto soffre.';
+      return 'EEM/SPY e STOXX/SPY entrambi in zona bassa (RISK-OFF) → <strong>fuga globale verso gli USA</strong>. Il dollaro sale, tutto il resto soffre.';
     var onN = [es,ss,se].filter(function(s){return s==='RISK-ON'||s==='GREED';}).length;
     return onN > 1 ? '<strong>Contesto prevalentemente risk-on</strong> geografico. Il capitale si distribuisce al di fuori degli USA.' : '<strong>Contesto prevalentemente risk-off</strong> geografico. Il capitale converge verso gli USA.';
   }
@@ -1167,5 +1268,6 @@ function renderGeoRotation(d) {
   widget.innerHTML = h;
 }
 
-
 </script>
+</body>
+</html>
