@@ -1,34 +1,36 @@
 {
-  "updated": "2026-11-03T03:51",
+  "updated": "2026-11-03T08:51",
   "date": "2026-11-03",
   "composite": "CAUTO",
   "latest": {
     "date": "2026-11-03",
-    "ts": "2026-11-03T03:51",
-    "pc_equity": 2.5,
-    "pc_total": null,
-    "pc_index": null,
-    "vix": 21.15,
+    "ts": "2026-11-03T08:51",
+    "pc_equity": null,
+    "pc_total": 0.87,
+    "pc_index": 0.96,
+    "vix": 21.75,
     "skew": 152.78,
-    "vstoxx": 13.62,
-    "stoxx50": 6176.0601,
-    "hyg_iei": null,
-    "eem_spy": 0.081252,
-    "copper_gold": 0.001638,
-    "tip_ief": 1.162842,
-    "dxy": 101.78,
-    "eurusd": 1.1189,
-    "yield_curve": 0.912,
-    "stoxx_spy": 8.211754,
-    "stoxx_eem": 101.064639,
+    "vstoxx": null,
+    "stoxx50": 6115.2798,
+    "hyg_iei": 0.88831719,
+    "hyg_iei_src": "MI",
+    "eem_spy": 0.08125249,
+    "copper_gold": 0.00162306,
+    "tip_ief": 1.16284153,
+    "dxy": 101.732,
+    "eurusd": 1.1194,
+    "yield_curve": null,
+    "yield_curve_src": null,
+    "stoxx_spy": 8.13093977,
+    "stoxx_eem": 100.07003436,
     "btp_bund": null
   },
   "signals": {
     "vix": {
-      "value": 21.15,
-      "percentile": 91.2,
+      "value": 21.75,
+      "percentile": 93.3,
       "signal": "FEAR",
-      "ma50": 16.6928,
+      "ma50": 16.7048,
       "trend": "SOPRA MA50"
     },
     "skew": {
@@ -39,96 +41,96 @@
       "trend": "SOPRA MA50"
     },
     "vstoxx": {
-      "value": 13.62,
-      "percentile": 49.0,
-      "signal": "NEUTRAL",
-      "ma50": 12.0334,
-      "trend": "SOPRA MA50"
+      "value": null,
+      "percentile": null,
+      "signal": "N/D",
+      "ma50": 12.001,
+      "trend": null
     },
     "pc_equity": {
-      "value": 2.5,
-      "percentile": 100.0,
-      "signal": "FEAR",
+      "value": null,
+      "percentile": null,
+      "signal": "N/D",
       "ma50": 2.5,
-      "trend": "SOTTO MA50"
+      "trend": null
     },
     "pc_total": {
-      "value": null,
-      "percentile": null,
-      "signal": "N/D",
-      "ma50": null,
-      "trend": null
+      "value": 0.87,
+      "percentile": 80.6,
+      "signal": "FEAR",
+      "ma50": 0.87,
+      "trend": "SOTTO MA50"
     },
     "pc_index": {
-      "value": null,
-      "percentile": null,
-      "signal": "N/D",
-      "ma50": null,
-      "trend": null
+      "value": 0.96,
+      "percentile": 19.4,
+      "signal": "GREED",
+      "ma50": 0.96,
+      "trend": "SOTTO MA50"
     }
   },
   "ratios": {
     "hyg_iei": {
-      "value": null,
+      "value": 0.88831719,
       "percentile": null,
       "signal": "N/D",
-      "ma50": null,
-      "trend": null
+      "ma50": 0.8883,
+      "trend": "SOPRA MA50"
     },
     "eem_spy": {
-      "value": 0.081252,
+      "value": 0.08125249,
       "percentile": 3.6,
       "signal": "RISK-OFF",
       "ma50": 0.0855,
       "trend": "SOTTO MA50"
     },
     "copper_gold": {
-      "value": 0.001638,
-      "percentile": 81.9,
+      "value": 0.00162306,
+      "percentile": 80.8,
       "signal": "RISK-ON",
       "ma50": 0.0016,
       "trend": "SOPRA MA50"
     },
     "tip_ief": {
-      "value": 1.162842,
-      "percentile": 60.1,
+      "value": 1.16284153,
+      "percentile": 59.6,
       "signal": "NEUTRAL",
       "ma50": 1.165,
       "trend": "SOTTO MA50"
     },
     "dxy": {
-      "value": 101.78,
-      "percentile": 78.2,
+      "value": 101.732,
+      "percentile": 75.6,
       "signal": "NEUTRAL",
-      "ma50": 101.2363,
+      "ma50": 101.2354,
       "trend": "SOPRA MA50"
     },
     "eurusd": {
-      "value": 1.1189,
-      "percentile": 19.7,
-      "signal": "RISK-OFF",
+      "value": 1.1194,
+      "percentile": 20.2,
+      "signal": "NEUTRAL",
       "ma50": 1.1325,
       "trend": "SOTTO MA50"
     },
     "yield_curve": {
-      "value": 0.912,
-      "percentile": 55.4,
-      "signal": "NEUTRAL",
-      "ma50": 1.076,
-      "trend": "SOTTO MA50"
+      "value": null,
+      "percentile": null,
+      "signal": "N/D",
+      "ma50": null,
+      "trend": null
     },
     "stoxx_spy": {
-      "value": 8.211754,
-      "percentile": 49.7,
+      "value": 8.13093977,
+      "percentile": 42.5,
       "signal": "NEUTRAL",
-      "ma50": 8.1212,
+      "ma50": 8.1196,
       "trend": "SOPRA MA50"
     },
     "stoxx_eem": {
-      "value": 101.064639,
-      "percentile": 99.0,
+      "value": 100.07003436,
+      "percentile": 96.4,
       "signal": "RISK-ON",
-      "ma50": 95.0422,
+      "ma50": 95.0223,
       "trend": "SOPRA MA50"
     },
     "btp_bund": {
@@ -142,37 +144,237 @@
   "projection": {
     "breve": {
       "orizzonte": "2-4 settimane",
-      "score": -68.8,
+      "copertura": 62,
+      "dati_mancanti": [
+        "pc_equity",
+        "vstoxx"
+      ],
+      "driver": "VIX · P/C Equity · P/C Total · SKEW · VSTOXX",
+      "score": -100.0,
       "regime": "RISK-OFF",
       "probabilita": {
-        "risk_on": 9,
-        "neutro": 57,
-        "risk_off": 34
-      },
-      "driver": "VIX \u00b7 P/C Ratio \u00b7 SKEW \u00b7 VSTOXX"
+        "risk_on": 0,
+        "neutro": 0,
+        "risk_off": 100
+      }
     },
     "medio": {
       "orizzonte": "1-3 mesi",
-      "score": -6.2,
-      "regime": "CAUTO",
+      "copertura": 75,
+      "dati_mancanti": [
+        "hyg_iei"
+      ],
+      "driver": "HYG/IEI · EEM/SPY · Rame/Oro · TIP/IEF · EUR/USD",
+      "score": 8.3,
+      "regime": "POSITIVO",
       "probabilita": {
-        "risk_on": 28,
-        "neutro": 51,
-        "risk_off": 21
-      },
-      "driver": "HYG/IEI \u00b7 Copper/Gold \u00b7 EEM/SPY \u00b7 EUR/USD"
+        "risk_on": 8,
+        "neutro": 92,
+        "risk_off": 0
+      }
     },
     "lungo": {
       "orizzonte": "6-18 mesi",
-      "score": 0.0,
-      "regime": "NEUTRO",
-      "probabilita": {
-        "risk_on": 30,
-        "neutro": 50,
-        "risk_off": 20
-      },
-      "driver": "Yield Curve \u00b7 BTP/Bund \u00b7 STOXX/SPY"
+      "copertura": 23,
+      "dati_mancanti": [
+        "yield_curve",
+        "btp_bund"
+      ],
+      "driver": "Curva 10Y-2Y · STOXX50/SPY · BTP/Bund",
+      "score": null,
+      "regime": "N/D",
+      "probabilita": null
     }
+  },
+  "data_quality": {
+    "disponibili": 13,
+    "totale": 17,
+    "mancanti": [
+      "pc_equity",
+      "vstoxx",
+      "yield_curve",
+      "btp_bund"
+    ],
+    "fonti": {
+      "hyg_iei": "MI",
+      "yield_curve": null
+    }
+  },
+  "rules": {
+    "versione": "RAPTOR SIGNAL v3.0",
+    "frequenza": "Lun-Ven alle 08:00, 14:00, 21:30 e 23:00 UTC (GitHub Actions). Una riga per seduta: l'ultimo aggiornamento del giorno sostituisce i precedenti. La data della riga è quella dell'ultima barra di mercato (^VIX), non l'orario di esecuzione.",
+    "fonti": [
+      {
+        "serie": "VIX",
+        "fonte": "Yahoo Finance ^VIX"
+      },
+      {
+        "serie": "SKEW",
+        "fonte": "Yahoo Finance ^SKEW"
+      },
+      {
+        "serie": "VSTOXX",
+        "fonte": "Yahoo Finance ^V2TX (solo indice: se non disponibile il dato manca)"
+      },
+      {
+        "serie": "P/C Equity",
+        "fonte": "CBOE (CSV ufficiale; in subordine pagina web)"
+      },
+      {
+        "serie": "P/C Total",
+        "fonte": "CBOE (CSV ufficiale; in subordine pagina web)"
+      },
+      {
+        "serie": "P/C Index",
+        "fonte": "CBOE (CSV ufficiale; in subordine pagina web)"
+      },
+      {
+        "serie": "HYG/IEI",
+        "fonte": "IHYG.MI / IEGE.MI (EUR, Milano); se assenti HYG / IEI (USD). Percentile e MA50 solo sulla stessa fonte"
+      },
+      {
+        "serie": "EEM/SPY",
+        "fonte": "Yahoo Finance EEM / SPY"
+      },
+      {
+        "serie": "Rame/Oro",
+        "fonte": "Yahoo Finance HG=F / GC=F (futures)"
+      },
+      {
+        "serie": "TIP/IEF",
+        "fonte": "Yahoo Finance TIP / IEF"
+      },
+      {
+        "serie": "DXY",
+        "fonte": "Yahoo Finance DX-Y.NYB"
+      },
+      {
+        "serie": "EUR/USD",
+        "fonte": "Yahoo Finance EURUSD=X"
+      },
+      {
+        "serie": "Curva 10Y-2Y",
+        "fonte": "FRED T10Y2Y (punti percentuali)"
+      },
+      {
+        "serie": "STOXX50/SPY",
+        "fonte": "Yahoo Finance ^STOXX50E / SPY (indice in punti / ETF in USD: misura di tendenza, non un rapporto puro)"
+      },
+      {
+        "serie": "STOXX50/EEM",
+        "fonte": "Yahoo Finance ^STOXX50E / EEM (indice in punti / ETF in USD: misura di tendenza)"
+      },
+      {
+        "serie": "BTP/Bund",
+        "fonte": "Non implementato: sempre N/D"
+      },
+      {
+        "serie": "Storico",
+        "fonte": "Ricostruibile su 2 anni da Yahoo Finance, FRED e CBOE con l'opzione --rebuild"
+      }
+    ],
+    "calcolo_segnali": [
+      "Percentile del valore odierno sulle ultime 252 osservazioni (minimo 20, altrimenti N/D).",
+      "Serie invertite (VIX, SKEW, VSTOXX, P/C Equity, P/C Total, P/C Index, DXY): percentile >= 80 = FEAR; percentile <= 20 = GREED; altrimenti NEUTRAL.",
+      "Serie dirette (HYG/IEI, EEM/SPY, Rame/Oro, TIP/IEF, EUR/USD, Curva 10Y-2Y, STOXX50/SPY, STOXX50/EEM, BTP/Bund): percentile >= 80 = RISK-ON; percentile <= 20 = RISK-OFF; altrimenti NEUTRAL.",
+      "TREND: valore sopra/sotto la media mobile a 50 osservazioni (MA50). Trend e segnale sono misure diverse e possono divergere.",
+      "HYG/IEI e curva 10Y-2Y: percentile e MA50 usano solo osservazioni della stessa fonte."
+    ],
+    "composito": "Quota di segnali FEAR / RISK-OFF / TAIL RISK sul totale dei segnali disponibili (N/D esclusi): >= 55% = RISK-OFF; >= 35% = CAUTO. Altrimenti quota GREED / RISK-ON / COMPLACENCY: >= 55% = RISK-ON; >= 35% = POSITIVO. In tutti gli altri casi NEUTRO.",
+    "indice_regime": [
+      "Ogni segnale vale +1 (RISK-ON/GREED), 0 (NEUTRAL) o -1 (FEAR/RISK-OFF), moltiplicato per il suo peso.",
+      "Indice = somma pesata / somma dei pesi dei soli segnali disponibili, x100 (intervallo -100 / +100).",
+      "I dati mancanti (N/D) sono esclusi dal calcolo. Se i segnali disponibili pesano meno del 50% del totale, l'orizzonte è N/D (dati insufficienti).",
+      "Quote Risk-On / Neutro / Risk-Off: |indice| viene attribuito alla direzione del segno, il resto è Neutro. Non sono probabilità statistiche."
+    ],
+    "pesi": {
+      "breve": {
+        "orizzonte": "2-4 settimane",
+        "componenti": [
+          {
+            "nome": "VIX",
+            "peso": 2.5
+          },
+          {
+            "nome": "P/C Equity",
+            "peso": 2.0
+          },
+          {
+            "nome": "P/C Total",
+            "peso": 1.5
+          },
+          {
+            "nome": "SKEW",
+            "peso": 1.0
+          },
+          {
+            "nome": "VSTOXX",
+            "peso": 1.0
+          }
+        ]
+      },
+      "medio": {
+        "orizzonte": "1-3 mesi",
+        "componenti": [
+          {
+            "nome": "HYG/IEI",
+            "peso": 2.0
+          },
+          {
+            "nome": "EEM/SPY",
+            "peso": 1.5
+          },
+          {
+            "nome": "Rame/Oro",
+            "peso": 2.0
+          },
+          {
+            "nome": "TIP/IEF",
+            "peso": 1.5
+          },
+          {
+            "nome": "EUR/USD",
+            "peso": 1.0
+          }
+        ]
+      },
+      "lungo": {
+        "orizzonte": "6-18 mesi",
+        "componenti": [
+          {
+            "nome": "Curva 10Y-2Y",
+            "peso": 3.0
+          },
+          {
+            "nome": "STOXX50/SPY",
+            "peso": 1.5
+          },
+          {
+            "nome": "BTP/Bund",
+            "peso": 2.0
+          }
+        ]
+      }
+    },
+    "regimi": [
+      "indice >= +30: RISK-ON",
+      "indice >= +5: POSITIVO",
+      "indice >= -5: NEUTRO",
+      "indice >= -30: CAUTO",
+      "indice < -30: RISK-OFF"
+    ],
+    "qualita_dati": [
+      "P/C CBOE: valori fuori range o identici agli ultimi 3 giorni vengono scartati (dato mancante, non sostituito).",
+      "VSTOXX: solo indice ^V2TX; nessuna sostituzione con volatilità realizzata.",
+      "HYG/IEI: variazioni > 15% rispetto all'ultimo valore della stessa fonte vengono scartate.",
+      "La pagina mostra le serie mancanti nella riga 'Qualità dati'."
+    ],
+    "limiti": [
+      "Non è una previsione di prezzo né una probabilità statistica: è un indice sintetico di regime.",
+      "STOXX50/SPY e STOXX50/EEM dividono un indice in punti per un ETF in USD: misurano la tendenza, non un rapporto puro.",
+      "BTP/Bund non è implementato (sempre N/D).",
+      "I segnali non costituiscono consulenza finanziaria né raccomandazione di investimento."
+    ]
   },
   "history": [
     {
@@ -4209,23 +4411,25 @@
     },
     {
       "date": "2026-11-03",
-      "ts": "2026-11-03T03:51",
-      "pc_equity": 2.5,
-      "pc_total": null,
-      "pc_index": null,
-      "vix": 21.15,
+      "ts": "2026-11-03T08:51",
+      "pc_equity": null,
+      "pc_total": 0.87,
+      "pc_index": 0.96,
+      "vix": 21.75,
       "skew": 152.78,
-      "vstoxx": 13.62,
-      "stoxx50": 6176.0601,
-      "hyg_iei": null,
-      "eem_spy": 0.081252,
-      "copper_gold": 0.001638,
-      "tip_ief": 1.162842,
-      "dxy": 101.78,
-      "eurusd": 1.1189,
-      "yield_curve": 0.912,
-      "stoxx_spy": 8.211754,
-      "stoxx_eem": 101.064639,
+      "vstoxx": null,
+      "stoxx50": 6115.2798,
+      "hyg_iei": 0.88831719,
+      "hyg_iei_src": "MI",
+      "eem_spy": 0.08125249,
+      "copper_gold": 0.00162306,
+      "tip_ief": 1.16284153,
+      "dxy": 101.732,
+      "eurusd": 1.1194,
+      "yield_curve": null,
+      "yield_curve_src": null,
+      "stoxx_spy": 8.13093977,
+      "stoxx_eem": 100.07003436,
       "btp_bund": null
     }
   ]
