@@ -1,0 +1,54 @@
+name: RAPTOR SIGNAL — Data Fetch 4x Daily
+
+on:
+  schedule:
+    - cron: '0 8 * * 1-5'    # 08:00 UTC — apertura mercati europei
+    - cron: '0 14 * * 1-5'   # 14:00 UTC — sessione USA in corso
+    - cron: '30 21 * * 1-5'  # 21:30 UTC — dopo chiusura USA (vale per ora legale e solare)
+    - cron: '0 23 * * 1-5'   # 23:00 UTC — aggiornamento notturno
+  workflow_dispatch:           # Esecuzione manuale dalla tab Actions
+    inputs:
+      rebuild:
+        description: 'Ricostruisci lo storico (2 anni) da Yahoo/FRED/CBOE — da usare una sola volta'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: raptor-signal-fetch
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Run RAPTOR SIGNAL fetcher
+        env:
+          REBUILD: ${{ github.event.inputs.rebuild }}
+        run: |
+          if [ "$REBUILD" = "true" ]; then
+            python scripts/fetch_data.py --rebuild
+          else
+            python scripts/fetch_data.py
+          fi
+
+      - name: Commit and push updated data
+        run: |
+          git config --local user.email "raptor-signal@github-actions"
+          git config --local user.name "RAPTOR SIGNAL Bot"
+          git add data/signal.json
+          git diff --staged --quiet && exit 0
+          git commit -m "📡 RAPTOR SIGNAL update $(date -u +'%Y-%m-%d %H:%M') UTC"
+          git pull --rebase origin "${{ github.ref_name }}"
+          git push
