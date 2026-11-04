@@ -18,7 +18,7 @@ Novità v3.0 (rispetto a v2.3):
 import json, os, sys, urllib.request, re, math, csv, io
 from datetime import datetime, timezone
 
-VERSION      = "RAPTOR SIGNAL v3.0"
+VERSION      = "RAPTOR SIGNAL v3.1"
 DATA_FILE    = "data/signal.json"
 MAX_HISTORY  = 504
 MIN_COVERAGE = 0.5          # copertura minima (peso dati disponibili / peso totale)
@@ -465,7 +465,39 @@ def build_rules():
             "BTP/Bund non è implementato (sempre N/D).",
             "I segnali non costituiscono consulenza finanziaria né raccomandazione di investimento.",
         ],
+        "rotazione": ROTAZIONE,
     }
+
+# ─── ROTAZIONE GEOGRAFICA (parametri e regole usati da rotazione.html) ────────
+ROTAZIONE = {
+    "finestre": {"1M": 21, "3M": 63, "6M": 126},   # in sedute di mercato
+    "soglia_pp": 1.0,                               # distanza minima 1°-2° a 3M per parlare di leadership
+    "valuta": "EUR",
+    "serie": [
+        "USA = SPY (USD); Europa = indice Euro Stoxx 50 (EUR); Emergenti = EEM (USD).",
+        "SPY si ricava da STOXX50 / (STOXX50/SPY); EEM da (EEM/SPY) x SPY. Le serie in USD sono convertite in EUR dividendo per EUR/USD.",
+        "Non sono strumenti investibili in EUR: sono una misura di tendenza delle tre aree.",
+    ],
+    "calcolo": [
+        "Finestre in sedute di mercato: 1M = 21, 3M = 63, 6M = 126.",
+        "Performance in EUR = valore oggi / valore N sedute fa - 1.",
+        "Performance vs USA = (1 + performance dell'area) / (1 + performance USA) - 1.",
+        "Il rango (1°, 2°, 3°) ordina le tre aree per performance in EUR su ciascun orizzonte.",
+        "Se manca un dato nelle date usate, l'orizzonte è N/D.",
+    ],
+    "verdetto": [
+        "Nessuna leadership chiara: a 3M la distanza tra la prima e la seconda area è inferiore alla soglia (1 punto percentuale).",
+        "Leadership consolidata: la stessa area è prima a 1M, 3M e 6M.",
+        "Possibile rotazione in corso: la prima area a 1M è diversa dalla prima a 3M.",
+        "Leadership recente: 1M e 3M hanno la stessa prima area, 6M un'altra.",
+        "Il verdetto descrive la tendenza passata: non è una previsione.",
+    ],
+    "limiti": [
+        "L'indice Euro Stoxx 50 comprende solo 50 titoli: non rappresenta tutta l'Europa.",
+        "Le performance non includono costi, tasse né coperture valutarie degli strumenti reali.",
+        "I segnali non costituiscono consulenza finanziaria né raccomandazione di investimento.",
+    ],
+}
 
 # ─── MAIN ─────────────────────────────────────────────────────
 
