@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAPTOR ROTAZIONE — USA · Europa · Emergenti</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans+Condensed:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root {
+  --bg:#ffffff; --bg3:#f0efe8; --border:#d4d0c8; --border2:#e8e4dc;
+  --orange:#ff6600; --orange2:#cc4400; --red:#cc0000; --green:#007700; --amber:#996600;
+  --text:#1a1a1a; --text2:#444444; --muted:#888888;
+  --mono:'IBM Plex Mono', monospace; --sans:'IBM Plex Sans Condensed', sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:var(--sans); font-size:14px; line-height:1.4; }
+.wrap { max-width:1100px; margin:0 auto; padding:0 16px 60px; }
+
+.head { display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px;
+  padding:22px 0 10px; border-bottom:2px solid var(--orange); margin-bottom:16px; }
+.head h1 { font-family:var(--mono); font-size:15px; letter-spacing:.18em; text-transform:uppercase; }
+.head .sub { font-family:var(--mono); font-size:11px; color:var(--muted); }
+.head a { color:var(--orange2); text-decoration:none; font-family:var(--mono); font-size:11px; }
+
+.verdict { border:1px solid var(--border); border-left:4px solid var(--orange); padding:16px 18px; margin-bottom:16px; }
+.verdict-label { font-family:var(--mono); font-size:10px; letter-spacing:.15em; color:var(--muted); margin-bottom:6px; }
+.verdict-text { font-size:20px; font-weight:600; line-height:1.3; }
+.verdict-note { font-size:12px; color:var(--text2); margin-top:6px; }
+
+.cards { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px; }
+@media(max-width:760px){ .cards { grid-template-columns:1fr; } }
+.card { border:1px solid var(--border); padding:14px 16px; }
+.card.first { border:2px solid var(--green); }
+.card-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.card-name { font-family:var(--mono); font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
+.rank { font-family:var(--mono); font-size:10px; font-weight:700; padding:2px 7px; background:#f3f4f6; color:#555; }
+.card.first .rank { background:#d1fae5; color:var(--green); }
+.tbl { width:100%; border-collapse:collapse; font-family:var(--mono); font-size:12px; }
+.tbl th { font-size:9px; font-weight:600; letter-spacing:.1em; color:var(--muted); text-align:right; padding:0 0 4px; }
+.tbl th:first-child { text-align:left; }
+.tbl td { padding:5px 0; text-align:right; border-top:1px solid var(--border2); font-weight:700; }
+.tbl td:first-child { text-align:left; font-weight:400; color:var(--text2); font-family:var(--sans); font-size:11px; }
+.pos { color:var(--green); } .neg { color:var(--red); } .nd { color:var(--muted); font-weight:400 !important; }
+
+.chart-card { border:1px solid var(--border); padding:14px; margin-bottom:16px; }
+.chart-title { font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.15em; color:var(--muted); margin-bottom:10px; text-transform:uppercase; }
+.chart-box { position:relative; height:260px; }
+
+.note { background:#fffef0; border:1px solid #e6d080; border-left:3px solid var(--orange);
+  padding:10px 14px; font-size:12px; color:var(--text2); margin-bottom:16px; line-height:1.6; }
+
+.btn-row { display:flex; gap:10px; flex-wrap:wrap; margin:6px 0 24px; }
+.btn { font-family:var(--mono); font-size:11px; letter-spacing:.12em; padding:9px 16px; border:1px solid #1a1a1a;
+  background:#1a1a1a; color:#f0efe8; cursor:pointer; text-decoration:none; transition:background .15s; }
+.btn:hover { background:var(--orange2); border-color:var(--orange2); }
+.btn-sec { background:#fff; color:var(--text); border-color:var(--border); }
+.btn-sec:hover { background:var(--bg3); }
+
+footer { border-top:2px solid var(--border); padding:16px 0; font-family:var(--mono); font-size:10px; color:var(--muted); line-height:2; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <h1>RAPTOR ROTAZIONE</h1>
+    <span class="sub" id="asof">—</span>
+    <a href="index.html">← RAPTOR SIGNAL</a>
+  </div>
+
+  <div class="verdict">
+    <div class="verdict-label">◈ CHI GUIDA — VISTA IN EURO</div>
+    <div class="verdict-text" id="verdict">Caricamento…</div>
+    <div class="verdict-note" id="verdict-note"></div>
+  </div>
+
+  <div class="cards" id="cards"></div>
+
+  <div class="chart-card">
+    <div class="chart-title">Europa e Emergenti rispetto agli USA — base 100, in EUR, ultime 126 sedute</div>
+    <div class="chart-box"><canvas id="ch"></canvas></div>
+  </div>
+
+  <div class="note" id="note"></div>
+
+  <div class="btn-row">
+    <a href="#" class="btn" onclick="dlExcel(event)">⬇ SCARICA EXCEL</a>
+    <a href="#" class="btn btn-sec" onclick="dlRules(event)">⬇ REGOLE PDF</a>
+  </div>
+
+  <footer>
+    RAPTOR ROTAZIONE — Giorgio Goldoni · Consulente Finanziario Autonomo OCF<br>
+    Dati: Yahoo Finance (via RAPTOR SIGNAL) · Aggiornamento automatico via GitHub Actions (lun-ven)<br>
+    ⚠ Il verdetto descrive la tendenza passata e non è una previsione. Non costituisce consulenza finanziaria né raccomandazione di investimento.
+  </footer>
+</div>
+
+<script>
+// ─── PARAMETRI (letti da signal.json → rules.rotazione; fallback ai valori predefiniti) ───
+const DEF = { finestre: { '1M': 21, '3M': 63, '6M': 126 }, soglia_pp: 1.0 };
+const NOMI = { usa: 'USA', eu: 'Europa', em: 'Emergenti' };
+const KEYS = ['usa', 'eu', 'em'];
+let STATE = null;
+
+// ─── UTILS ───────────────────────────────────────────────────
+const fmtP = v => v == null ? '—' : (v >= 0 ? '+' : '') + (v * 100).toFixed(1) + '%';
+const cls  = v => v == null ? 'nd' : v >= 0 ? 'pos' : 'neg';
+
+// Serie in EUR: USA = SPY/EURUSD; Europa = STOXX50; EM = EEM/EURUSD
+// SPY = STOXX50 / (STOXX50/SPY);  EEM = (EEM/SPY) * SPY
+function buildSeries(h) {
+  return h.map(r => {
+    const ok = r.stoxx50 != null && r.stoxx_spy && r.eem_spy != null && r.eurusd;
+    if (!ok) return { date: r.date, usa: null, eu: null, em: null };
+    const spy = r.stoxx50 / r.stoxx_spy;
+    const eem = r.eem_spy * spy;
+    return { date: r.date, usa: spy / r.eurusd, eu: r.stoxx50, em: eem / r.eurusd };
+  });
+}
+
+function perf(S, i, key, n) {
+  const j = i - n;
+  if (j < 0) return null;
+  const a = S[i][key], b = S[j][key];
+  return (a == null || b == null) ? null : a / b - 1;
+}
+
+function compute(d) {
+  const R = (d.rules && d.rules.rotazione) || null;
+  const W = (R && R.finestre) || DEF.finestre;
+  const thr = (R && R.soglia_pp != null) ? R.soglia_pp : DEF.soglia_pp;
+  const S = buildSeries(d.history || []);
+  let i = S.length - 1;
+  while (i >= 0 && (S[i].usa == null || S[i].eu == null || S[i].em == null)) i--;
+  const out = { R, W, thr, S, i, date: i >= 0 ? S[i].date : null, abs: {}, rel: {}, rank: {}, leader: {} };
+  const hz = Object.keys(W);
+  KEYS.forEach(k => { out.abs[k] = {}; out.rel[k] = {}; out.rank[k] = {}; });
+  hz.forEach(h => {
+    KEYS.forEach(k => { out.abs[k][h] = i >= 0 ? perf(S, i, k, W[h]) : null; });
+    KEYS.forEach(k => {
+      const a = out.abs[k][h], u = out.abs.usa[h];
+      out.rel[k][h] = (a == null || u == null) ? null : (1 + a) / (1 + u) - 1;
+    });
+    const ok = KEYS.every(k => out.abs[k][h] != null);
+    if (ok) {
+      const order = [...KEYS].sort((x, y) => out.abs[y][h] - out.abs[x][h]);
+      order.forEach((k, idx) => { out.rank[k][h] = idx + 1; });
+      out.leader[h] = order[0];
+      out.gap = out.gap || {};
+      out.gap[h] = (out.abs[order[0]][h] - out.abs[order[1]][h]) * 100;   // in punti percentuali
+    }
+  });
+  return out;
+}
+
+function verdict(st) {
+  const l1 = st.leader['1M'], l3 = st.leader['3M'], l6 = st.leader['6M'];
+  if (!l3) return { t: 'Dati insufficienti per calcolare la rotazione.', n: 'Servono almeno 127 sedute con tutte le serie disponibili: se hai appena rigenerato lo storico, attendi i prossimi aggiornamenti.' };
+  if (st.gap['3M'] < st.thr)
+    return { t: 'Nessuna leadership chiara a 3 mesi.', n: 'La distanza tra la prima e la seconda area è di ' + st.gap['3M'].toFixed(1) + ' punti percentuali, sotto la soglia di ' + st.thr + '.' };
+  if (l1 && l6 && l1 === l3 && l3 === l6)
+    return { t: NOMI[l3] + ' guida su tutti gli orizzonti (1, 3 e 6 mesi).', n: 'Leadership consolidata. Distanza dalla seconda a 3 mesi: ' + st.gap['3M'].toFixed(1) + ' punti.' };
+  if (l1 && l1 !== l3)
+    return { t: 'Possibile rotazione in corso: a 1 mese guida ' + NOMI[l1] + ', a 3 mesi guida ' + NOMI[l3] + '.', n: 'La leadership di breve non coincide con quella di medio periodo.' };
+  return { t: NOMI[l3] + ' guida a 1 e 3 mesi' + (l6 ? '; a 6 mesi guida ' + NOMI[l6] : '') + '.', n: 'Leadership recente: l\u2019orizzonte a 6 mesi indica un\u2019altra area.' };
+}
+
+// ─── RENDER ──────────────────────────────────────────────────
+function render(d) {
+  const st = compute(d);
+  STATE = { d, st };
+  document.getElementById('asof').textContent = st.date ? 'Dati al ' + st.date + ' · aggiornato ' + (d.updated || '') + ' UTC' : 'Dati non disponibili';
+  const v = verdict(st);
+  document.getElementById('verdict').textContent = v.t;
+  document.getElementById('verdict-note').textContent = v.n;
+
+  const hz = Object.keys(st.W);
+  const lead3 = st.leader['3M'];
+  document.getElementById('cards').innerHTML = KEYS.map(k => {
+    const r3 = st.rank[k]['3M'];
+    return `<div class="card ${lead3 === k ? 'first' : ''}">
+      <div class="card-head"><span class="card-name">${NOMI[k]}</span><span class="rank">${r3 ? r3 + '° a 3M' : 'N/D'}</span></div>
+      <table class="tbl">
+        <tr><th></th>${hz.map(h => `<th>${h}</th>`).join('')}</tr>
+        <tr><td>In EUR</td>${hz.map(h => `<td class="${cls(st.abs[k][h])}">${fmtP(st.abs[k][h])}</td>`).join('')}</tr>
+        <tr><td>Vs USA</td>${hz.map(h => k === 'usa' ? '<td class="nd">base</td>' : `<td class="${cls(st.rel[k][h])}">${fmtP(st.rel[k][h])}</td>`).join('')}</tr>
+        <tr><td>Rango</td>${hz.map(h => `<td class="${st.rank[k][h] ? '' : 'nd'}">${st.rank[k][h] ? st.rank[k][h] + '°' : '—'}</td>`).join('')}</tr>
+      </table></div>`;
+  }).join('');
+
+  document.getElementById('note').innerHTML =
+    '<strong>Come si legge.</strong> USA = SPY, Europa = Euro Stoxx 50 (solo 50 titoli), Emergenti = EEM; le serie in dollari sono convertite in euro con EUR/USD. ' +
+    'Sono misure di tendenza, non strumenti investibili in euro. Le finestre sono in sedute di mercato (' + hz.map(h => h + ' = ' + st.W[h]).join(', ') + '). ' +
+    'Pesi, formule e soglie sono nel PDF delle regole.' +
+    (st.R ? '' : '<br><strong>Nota:</strong> il file dati non contiene ancora le regole di rotazione: sto usando i valori predefiniti.');
+
+  renderChart(st);
+}
+
+function renderChart(st) {
+  const S = st.S.slice(0, st.i + 1).slice(-127).filter(r => r.usa != null);
+  if (S.length < 2 || typeof Chart === 'undefined') return;
+  const b = S[0];
+  const rel = k => S.map(r => +(100 * (r[k] / r.usa) / (b[k] / b.usa)).toFixed(2));
+  new Chart(document.getElementById('ch'), {
+    type: 'line',
+    data: {
+      labels: S.map(r => r.date.slice(5)),
+      datasets: [
+        { label: 'Europa vs USA', data: rel('eu'), borderColor: '#0066cc', borderWidth: 2, pointRadius: 0, tension: 0.2 },
+        { label: 'Emergenti vs USA', data: rel('em'), borderColor: '#cc6600', borderWidth: 2, pointRadius: 0, tension: 0.2 },
+        { label: 'USA (base)', data: S.map(() => 100), borderColor: '#888', borderWidth: 1, borderDash: [5, 4], pointRadius: 0 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#444', font: { family: 'IBM Plex Mono', size: 10 }, boxWidth: 12 } } },
+      scales: {
+        x: { ticks: { color: '#888', font: { family: 'IBM Plex Mono', size: 9 }, maxTicksLimit: 10 }, grid: { color: '#e8e4dc' } },
+        y: { ticks: { color: '#888', font: { family: 'IBM Plex Mono', size: 9 } }, grid: { color: '#e8e4dc' } }
+      },
+      interaction: { mode: 'index', intersect: false }, animation: { duration: 300 }
+    }
+  });
+}
+
+// ─── REGOLE (da signal.json → sempre allineate al codice) ────
+function rulesToLines(R) {
+  if (!R) return [['h', 'Regole non ancora disponibili'],
+    ['p', 'Il file data/signal.json non contiene il blocco rules.rotazione: attendere il prossimo aggiornamento dati. Nel frattempo la pagina usa i valori predefiniti: finestre 1M = 21, 3M = 63, 6M = 126 sedute; soglia di leadership 1 punto percentuale.']];
+  const L = [], h = t => L.push(['h', t]), p = t => L.push(['p', t]);
+  h('1. Serie e valuta');          (R.serie || []).forEach(t => p('- ' + t));
+  h('2. Calcolo');                 (R.calcolo || []).forEach(t => p('- ' + t));
+  p('Soglia di leadership: ' + R.soglia_pp + ' punti percentuali. Valuta di lettura: ' + (R.valuta || 'EUR') + '.');
+  h('3. Verdetto');                (R.verdetto || []).forEach(t => p('- ' + t));
+  h('4. Limiti');                  (R.limiti || []).forEach(t => p('- ' + t));
+  return L;
+}
+function pdfSafe(s) {
+  const map = {'·':'-','→':'->','≥':'>=','≤':'<=','−':'-','–':'-','—':'-','’':"'",'‘':"'",'“':'"','”':'"','×':'x','◈':''};
+  return String(s).replace(/[·→≥≤−–—’‘“”×◈]/g, c => map[c]).replace(/[^\x00-\xFF]/g, '');
+}
+
+function loadData() { return fetch('data/signal.json').then(r => r.json()); }
+
+function dlRules(e) {
+  e.preventDefault();
+  loadData().then(d => {
+    if (!window.jspdf) { alert('Libreria PDF non caricata: ricarica la pagina e riprova.'); return; }
+    const doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+    const M = 15, W = 180; let y = 20;
+    const room = n => { if (y + n > 280) { doc.addPage(); y = 20; } };
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(15);
+    doc.text('RAPTOR ROTAZIONE - Regole di calcolo', M, y); y += 7;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+    doc.text(pdfSafe('Versione regole: ' + ((d.rules && d.rules.versione) || 'n.d.') + '  |  Dati aggiornati: ' + (d.updated || 'n.d.') + ' UTC'), M, y); y += 6;
+    rulesToLines(d.rules && d.rules.rotazione).forEach(([t, s]) => {
+      if (t === 'h') { room(14); y += 3; doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.text(pdfSafe(s), M, y); y += 6; }
+      else {
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+        const lines = doc.splitTextToSize(pdfSafe(s), W);
+        room(lines.length * 4.4); doc.text(lines, M, y); y += lines.length * 4.4 + 1;
+      }
+    });
+    const n = doc.getNumberOfPages();
+    for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.text('Pag. ' + i + '/' + n, 195, 290, { align: 'right' }); }
+    doc.save('RAPTOR_ROTAZIONE_regole_' + (d.date || 'export') + '.pdf');
+  }).catch(err => { console.error(err); alert('Impossibile generare il PDF: dati non disponibili.'); });
+}
+
+function dlExcel(e) {
+  e.preventDefault();
+  loadData().then(d => {
+    const st = (STATE && STATE.d === d) ? STATE.st : compute(d);
+    const hz = Object.keys(st.W), v = verdict(st);
+    const riepilogo = [
+      ['RAPTOR ROTAZIONE — Export Dati'], ['Dati al:', st.date], ['Aggiornato:', d.updated], ['Verdetto:', v.t], [v.n], [],
+      ['Area', 'Orizzonte', 'Sedute', 'Performance in EUR', 'Performance vs USA', 'Rango']
+    ];
+    KEYS.forEach(k => hz.forEach(h => riepilogo.push([NOMI[k], h, st.W[h], st.abs[k][h] ?? '', k === 'usa' ? '' : (st.rel[k][h] ?? ''), st.rank[k][h] ?? ''])));
+    const serie = [['Data', 'USA (EUR)', 'Europa (EUR)', 'Emergenti (EUR)', 'Europa vs USA', 'Emergenti vs USA']];
+    st.S.forEach(r => serie.push([r.date, r.usa ?? '', r.eu ?? '', r.em ?? '',
+      r.usa != null ? r.eu / r.usa : '', r.usa != null ? r.em / r.usa : '']));
+    const regole = rulesToLines(d.rules && d.rules.rotazione).map(([t, s]) => t === 'h' ? [s.toUpperCase()] : [s]);
+    const fname = 'RAPTOR_ROTAZIONE_' + (d.date || 'export');
+    if (typeof XLSX === 'undefined') {
+      const tsv = [...riepilogo, [], ...serie].map(r => r.join('\t')).join('\n');
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob(['\uFEFF' + tsv], { type: 'text/tab-separated-values;charset=utf-8' }));
+      a.download = fname + '.xls'; a.click(); return;
+    }
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(riepilogo), 'Riepilogo');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(serie), 'Serie');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(regole), 'Regole');
+    XLSX.writeFile(wb, fname + '.xlsx');
+  });
+}
+
+loadData().then(render).catch(e => {
+  document.getElementById('verdict').textContent = 'Errore nel caricamento dei dati.';
+  console.error(e);
+});
+</script>
+</body>
+</html>
