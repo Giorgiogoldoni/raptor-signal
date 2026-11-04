@@ -1,50 +1,50 @@
 {
-  "updated": "2026-11-04T02:49",
-  "date": "2026-11-03",
+  "updated": "2026-11-04T15:49",
+  "date": "2026-11-04",
   "composite": "NEUTRO",
   "latest": {
-    "date": "2026-11-03",
-    "ts": "2026-11-04T02:49",
+    "date": "2026-11-04",
+    "ts": "2026-11-04T15:49",
     "pc_equity": null,
     "pc_total": 0.86,
     "pc_index": 1.02,
-    "vix": 20.83,
+    "vix": 17.32,
     "skew": 150.01,
     "vstoxx": null,
-    "stoxx50": 6144.5601,
-    "hyg_iei": 0.88902341,
+    "stoxx50": 6288.71,
+    "hyg_iei": 0.89478463,
     "hyg_iei_src": "MI",
-    "eem_spy": 0.08099688,
-    "copper_gold": 0.00160264,
-    "tip_ief": 1.16388767,
-    "dxy": 101.305,
-    "eurusd": 1.1192,
+    "eem_spy": 0.08045466,
+    "copper_gold": 0.00158295,
+    "tip_ief": 1.16088621,
+    "dxy": 101.535,
+    "eurusd": 1.1237,
     "yield_curve": null,
     "yield_curve_src": null,
-    "stoxx_spy": 8.14550288,
-    "stoxx_eem": 100.56563175,
+    "stoxx_spy": 8.21623987,
+    "stoxx_eem": 102.12260474,
     "btp_bund": null
   },
   "signals": {
     "vix": {
-      "value": 20.83,
-      "percentile": 90.7,
-      "signal": "FEAR",
-      "ma50": 16.6864,
+      "value": 17.32,
+      "percentile": 58.8,
+      "signal": "NEUTRAL",
+      "ma50": 16.7268,
       "trend": "SOPRA MA50"
     },
     "skew": {
       "value": 150.01,
       "percentile": 84.5,
       "signal": "FEAR",
-      "ma50": 149.8324,
+      "ma50": 149.801,
       "trend": "SOPRA MA50"
     },
     "vstoxx": {
       "value": null,
       "percentile": null,
       "signal": "N/D",
-      "ma50": 12.001,
+      "ma50": 12.0873,
       "trend": null
     },
     "pc_equity": {
@@ -56,14 +56,14 @@
     },
     "pc_total": {
       "value": 0.86,
-      "percentile": 74.2,
+      "percentile": 75.0,
       "signal": "NEUTRAL",
       "ma50": 0.86,
       "trend": "SOTTO MA50"
     },
     "pc_index": {
       "value": 1.02,
-      "percentile": 41.9,
+      "percentile": 43.8,
       "signal": "NEUTRAL",
       "ma50": 1.02,
       "trend": "SOTTO MA50"
@@ -71,45 +71,45 @@
   },
   "ratios": {
     "hyg_iei": {
-      "value": 0.88902341,
+      "value": 0.89478463,
       "percentile": null,
       "signal": "N/D",
-      "ma50": 0.889,
+      "ma50": 0.8919,
       "trend": "SOPRA MA50"
     },
     "eem_spy": {
-      "value": 0.08099688,
-      "percentile": 2.6,
+      "value": 0.08045466,
+      "percentile": 0.5,
       "signal": "RISK-OFF",
-      "ma50": 0.0855,
+      "ma50": 0.0854,
       "trend": "SOTTO MA50"
     },
     "copper_gold": {
-      "value": 0.00160264,
-      "percentile": 77.2,
+      "value": 0.00158295,
+      "percentile": 71.1,
       "signal": "NEUTRAL",
       "ma50": 0.0016,
-      "trend": "SOPRA MA50"
+      "trend": "SOTTO MA50"
     },
     "tip_ief": {
-      "value": 1.16388767,
-      "percentile": 63.2,
+      "value": 1.16088621,
+      "percentile": 52.6,
       "signal": "NEUTRAL",
-      "ma50": 1.165,
+      "ma50": 1.1651,
       "trend": "SOTTO MA50"
     },
     "dxy": {
-      "value": 101.305,
-      "percentile": 66.3,
+      "value": 101.535,
+      "percentile": 73.2,
       "signal": "NEUTRAL",
-      "ma50": 101.2268,
+      "ma50": 101.274,
       "trend": "SOPRA MA50"
     },
     "eurusd": {
-      "value": 1.1192,
-      "percentile": 20.2,
+      "value": 1.1237,
+      "percentile": 27.3,
       "signal": "NEUTRAL",
-      "ma50": 1.1325,
+      "ma50": 1.1317,
       "trend": "SOTTO MA50"
     },
     "yield_curve": {
@@ -120,17 +120,17 @@
       "trend": null
     },
     "stoxx_spy": {
-      "value": 8.14550288,
-      "percentile": 43.0,
+      "value": 8.21623987,
+      "percentile": 50.5,
       "signal": "NEUTRAL",
-      "ma50": 8.1199,
+      "ma50": 8.1182,
       "trend": "SOPRA MA50"
     },
     "stoxx_eem": {
-      "value": 100.56563175,
-      "percentile": 97.4,
+      "value": 102.12260474,
+      "percentile": 99.5,
       "signal": "RISK-ON",
-      "ma50": 95.0322,
+      "ma50": 95.2136,
       "trend": "SOPRA MA50"
     },
     "btp_bund": {
@@ -150,12 +150,12 @@
         "vstoxx"
       ],
       "driver": "VIX · P/C Equity · P/C Total · SKEW · VSTOXX",
-      "score": -70.0,
-      "regime": "RISK-OFF",
+      "score": -20.0,
+      "regime": "CAUTO",
       "probabilita": {
         "risk_on": 0,
-        "neutro": 30,
-        "risk_off": 70
+        "neutro": 80,
+        "risk_off": 20
       }
     },
     "medio": {
@@ -201,7 +201,7 @@
     }
   },
   "rules": {
-    "versione": "RAPTOR SIGNAL v3.0",
+    "versione": "RAPTOR SIGNAL v3.1",
     "frequenza": "Lun-Ven alle 08:00, 14:00, 21:30 e 23:00 UTC (GitHub Actions). Una riga per seduta: l'ultimo aggiornamento del giorno sostituisce i precedenti. La data della riga è quella dell'ultima barra di mercato (^VIX), non l'orario di esecuzione.",
     "fonti": [
       {
@@ -374,7 +374,40 @@
       "STOXX50/SPY e STOXX50/EEM dividono un indice in punti per un ETF in USD: misurano la tendenza, non un rapporto puro.",
       "BTP/Bund non è implementato (sempre N/D).",
       "I segnali non costituiscono consulenza finanziaria né raccomandazione di investimento."
-    ]
+    ],
+    "rotazione": {
+      "finestre": {
+        "1M": 21,
+        "3M": 63,
+        "6M": 126
+      },
+      "soglia_pp": 1.0,
+      "valuta": "EUR",
+      "serie": [
+        "USA = SPY (USD); Europa = indice Euro Stoxx 50 (EUR); Emergenti = EEM (USD).",
+        "SPY si ricava da STOXX50 / (STOXX50/SPY); EEM da (EEM/SPY) x SPY. Le serie in USD sono convertite in EUR dividendo per EUR/USD.",
+        "Non sono strumenti investibili in EUR: sono una misura di tendenza delle tre aree."
+      ],
+      "calcolo": [
+        "Finestre in sedute di mercato: 1M = 21, 3M = 63, 6M = 126.",
+        "Performance in EUR = valore oggi / valore N sedute fa - 1.",
+        "Performance vs USA = (1 + performance dell'area) / (1 + performance USA) - 1.",
+        "Il rango (1°, 2°, 3°) ordina le tre aree per performance in EUR su ciascun orizzonte.",
+        "Se manca un dato nelle date usate, l'orizzonte è N/D."
+      ],
+      "verdetto": [
+        "Nessuna leadership chiara: a 3M la distanza tra la prima e la seconda area è inferiore alla soglia (1 punto percentuale).",
+        "Leadership consolidata: la stessa area è prima a 1M, 3M e 6M.",
+        "Possibile rotazione in corso: la prima area a 1M è diversa dalla prima a 3M.",
+        "Leadership recente: 1M e 3M hanno la stessa prima area, 6M un'altra.",
+        "Il verdetto descrive la tendenza passata: non è una previsione."
+      ],
+      "limiti": [
+        "L'indice Euro Stoxx 50 comprende solo 50 titoli: non rappresenta tutta l'Europa.",
+        "Le performance non includono costi, tasse né coperture valutarie degli strumenti reali.",
+        "I segnali non costituiscono consulenza finanziaria né raccomandazione di investimento."
+      ]
+    }
   },
   "history": [
     {
@@ -4430,6 +4463,29 @@
       "yield_curve_src": null,
       "stoxx_spy": 8.14550288,
       "stoxx_eem": 100.56563175,
+      "btp_bund": null
+    },
+    {
+      "date": "2026-11-04",
+      "ts": "2026-11-04T15:49",
+      "pc_equity": null,
+      "pc_total": 0.86,
+      "pc_index": 1.02,
+      "vix": 17.32,
+      "skew": 150.01,
+      "vstoxx": null,
+      "stoxx50": 6288.71,
+      "hyg_iei": 0.89478463,
+      "hyg_iei_src": "MI",
+      "eem_spy": 0.08045466,
+      "copper_gold": 0.00158295,
+      "tip_ief": 1.16088621,
+      "dxy": 101.535,
+      "eurusd": 1.1237,
+      "yield_curve": null,
+      "yield_curve_src": null,
+      "stoxx_spy": 8.21623987,
+      "stoxx_eem": 102.12260474,
       "btp_bund": null
     }
   ]
