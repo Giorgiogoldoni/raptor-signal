@@ -1,36 +1,36 @@
 {
-  "updated": "2026-11-10T15:51",
+  "updated": "2026-11-10T20:39",
   "date": "2026-11-10",
   "composite": "CAUTO",
   "latest": {
     "date": "2026-11-10",
-    "ts": "2026-11-10T15:51",
+    "ts": "2026-11-10T20:39",
     "pc_equity": null,
     "pc_total": 0.88,
     "pc_index": 1.06,
-    "vix": 20.21,
+    "vix": 19.83,
     "skew": 150.34,
     "vstoxx": null,
-    "stoxx50": 6352.9302,
-    "hyg_iei": 0.89996975,
+    "stoxx50": 6327.8701,
+    "hyg_iei": 0.89786247,
     "hyg_iei_src": "MI",
-    "eem_spy": 0.08104324,
-    "copper_gold": 0.00154846,
-    "tip_ief": 1.15701571,
-    "dxy": 102.188,
-    "eurusd": 1.1162,
+    "eem_spy": 0.08077288,
+    "copper_gold": 0.00155189,
+    "tip_ief": 1.15663445,
+    "dxy": 102.245,
+    "eurusd": 1.1167,
     "yield_curve": null,
     "yield_curve_src": null,
-    "stoxx_spy": 8.51222676,
-    "stoxx_eem": 105.03315202,
+    "stoxx_spy": 8.44526759,
+    "stoxx_eem": 104.55573804,
     "btp_bund": null
   },
   "signals": {
     "vix": {
-      "value": 20.21,
-      "percentile": 88.4,
+      "value": 19.83,
+      "percentile": 85.9,
       "signal": "FEAR",
-      "ma50": 17.2744,
+      "ma50": 17.2668,
       "trend": "SOPRA MA50"
     },
     "skew": {
@@ -71,45 +71,45 @@
   },
   "ratios": {
     "hyg_iei": {
-      "value": 0.89996975,
+      "value": 0.89786247,
       "percentile": null,
       "signal": "N/D",
-      "ma50": 0.8936,
+      "ma50": 0.8932,
       "trend": "SOPRA MA50"
     },
     "eem_spy": {
-      "value": 0.08104324,
-      "percentile": 4.5,
+      "value": 0.08077288,
+      "percentile": 3.5,
       "signal": "RISK-OFF",
-      "ma50": 0.0847,
+      "ma50": 0.0846,
       "trend": "SOTTO MA50"
     },
     "copper_gold": {
-      "value": 0.00154846,
+      "value": 0.00155189,
       "percentile": 55.1,
       "signal": "NEUTRAL",
       "ma50": 0.0016,
       "trend": "SOTTO MA50"
     },
     "tip_ief": {
-      "value": 1.15701571,
-      "percentile": 41.9,
+      "value": 1.15663445,
+      "percentile": 40.4,
       "signal": "NEUTRAL",
       "ma50": 1.1644,
       "trend": "SOTTO MA50"
     },
     "dxy": {
-      "value": 102.188,
-      "percentile": 86.9,
+      "value": 102.245,
+      "percentile": 88.9,
       "signal": "FEAR",
-      "ma50": 101.5094,
+      "ma50": 101.5105,
       "trend": "SOPRA MA50"
     },
     "eurusd": {
-      "value": 1.1162,
-      "percentile": 17.2,
+      "value": 1.1167,
+      "percentile": 18.2,
       "signal": "RISK-OFF",
-      "ma50": 1.1282,
+      "ma50": 1.1283,
       "trend": "SOTTO MA50"
     },
     "yield_curve": {
@@ -120,17 +120,17 @@
       "trend": null
     },
     "stoxx_spy": {
-      "value": 8.51222676,
-      "percentile": 94.9,
+      "value": 8.44526759,
+      "percentile": 82.3,
       "signal": "RISK-ON",
-      "ma50": 8.1265,
+      "ma50": 8.1251,
       "trend": "SOPRA MA50"
     },
     "stoxx_eem": {
-      "value": 105.03315202,
+      "value": 104.55573804,
       "percentile": 99.5,
       "signal": "RISK-ON",
-      "ma50": 96.1279,
+      "ma50": 96.1183,
       "trend": "SOPRA MA50"
     },
     "btp_bund": {
@@ -4559,25 +4559,25 @@
     },
     {
       "date": "2026-11-10",
-      "ts": "2026-11-10T15:51",
+      "ts": "2026-11-10T20:39",
       "pc_equity": null,
       "pc_total": 0.88,
       "pc_index": 1.06,
-      "vix": 20.21,
+      "vix": 19.83,
       "skew": 150.34,
       "vstoxx": null,
-      "stoxx50": 6352.9302,
-      "hyg_iei": 0.89996975,
+      "stoxx50": 6327.8701,
+      "hyg_iei": 0.89786247,
       "hyg_iei_src": "MI",
-      "eem_spy": 0.08104324,
-      "copper_gold": 0.00154846,
-      "tip_ief": 1.15701571,
-      "dxy": 102.188,
-      "eurusd": 1.1162,
+      "eem_spy": 0.08077288,
+      "copper_gold": 0.00155189,
+      "tip_ief": 1.15663445,
+      "dxy": 102.245,
+      "eurusd": 1.1167,
       "yield_curve": null,
       "yield_curve_src": null,
-      "stoxx_spy": 8.51222676,
-      "stoxx_eem": 105.03315202,
+      "stoxx_spy": 8.44526759,
+      "stoxx_eem": 104.55573804,
       "btp_bund": null
     }
   ]
