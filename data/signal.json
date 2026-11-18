@@ -1,13 +1,13 @@
 {
-  "updated": "2026-11-18T02:58",
+  "updated": "2026-11-18T03:57",
   "date": "2026-11-17",
   "composite": "CAUTO",
   "latest": {
     "date": "2026-11-17",
-    "ts": "2026-11-18T02:58",
+    "ts": "2026-11-18T03:57",
     "pc_equity": null,
-    "pc_total": 0.95,
-    "pc_index": 1.01,
+    "pc_total": 0.98,
+    "pc_index": 0.98,
     "vix": 25.46,
     "skew": 145.11,
     "vstoxx": null,
@@ -15,9 +15,9 @@
     "hyg_iei": 0.89395161,
     "hyg_iei_src": "MI",
     "eem_spy": 0.079556,
-    "copper_gold": 0.00155805,
+    "copper_gold": 0.0015531,
     "tip_ief": 1.15949563,
-    "dxy": 103.599,
+    "dxy": 103.62,
     "eurusd": 1.0998,
     "yield_curve": null,
     "yield_curve_src": null,
@@ -55,17 +55,17 @@
       "trend": null
     },
     "pc_total": {
-      "value": 0.95,
+      "value": 0.98,
       "percentile": 97.6,
       "signal": "FEAR",
-      "ma50": 0.9045,
+      "ma50": 0.9073,
       "trend": "SOPRA MA50"
     },
     "pc_index": {
-      "value": 1.01,
-      "percentile": 41.5,
+      "value": 0.98,
+      "percentile": 29.3,
       "signal": "NEUTRAL",
-      "ma50": 1.0109,
+      "ma50": 1.0082,
       "trend": "SOTTO MA50"
     }
   },
@@ -85,8 +85,8 @@
       "trend": "SOTTO MA50"
     },
     "copper_gold": {
-      "value": 0.00155805,
-      "percentile": 55.2,
+      "value": 0.0015531,
+      "percentile": 54.7,
       "signal": "NEUTRAL",
       "ma50": 0.0016,
       "trend": "SOTTO MA50"
@@ -99,10 +99,10 @@
       "trend": "SOTTO MA50"
     },
     "dxy": {
-      "value": 103.599,
-      "percentile": 97.5,
+      "value": 103.62,
+      "percentile": 98.5,
       "signal": "FEAR",
-      "ma50": 101.8705,
+      "ma50": 101.8709,
       "trend": "SOPRA MA50"
     },
     "eurusd": {
@@ -4674,10 +4674,10 @@
     },
     {
       "date": "2026-11-17",
-      "ts": "2026-11-18T02:58",
+      "ts": "2026-11-18T03:57",
       "pc_equity": null,
-      "pc_total": 0.95,
-      "pc_index": 1.01,
+      "pc_total": 0.98,
+      "pc_index": 0.98,
       "vix": 25.46,
       "skew": 145.11,
       "vstoxx": null,
@@ -4685,9 +4685,9 @@
       "hyg_iei": 0.89395161,
       "hyg_iei_src": "MI",
       "eem_spy": 0.079556,
-      "copper_gold": 0.00155805,
+      "copper_gold": 0.0015531,
       "tip_ief": 1.15949563,
-      "dxy": 103.599,
+      "dxy": 103.62,
       "eurusd": 1.0998,
       "yield_curve": null,
       "yield_curve_src": null,
