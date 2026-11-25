@@ -1,10 +1,10 @@
 {
-  "updated": "2026-11-25T04:22",
+  "updated": "2026-11-25T05:09",
   "date": "2026-11-24",
   "composite": "CAUTO",
   "latest": {
     "date": "2026-11-24",
-    "ts": "2026-11-25T04:22",
+    "ts": "2026-11-25T05:09",
     "pc_equity": null,
     "pc_total": 0.95,
     "pc_index": 1.12,
@@ -15,9 +15,9 @@
     "hyg_iei": 0.8917666,
     "hyg_iei_src": "MI",
     "eem_spy": 0.07886975,
-    "copper_gold": 0.00153647,
+    "copper_gold": 0.00150552,
     "tip_ief": 1.15069838,
-    "dxy": 103.972,
+    "dxy": 103.81,
     "eurusd": 1.0908,
     "yield_curve": null,
     "yield_curve_src": null,
@@ -85,8 +85,8 @@
       "trend": "SOTTO MA50"
     },
     "copper_gold": {
-      "value": 0.00153647,
-      "percentile": 50.0,
+      "value": 0.00150552,
+      "percentile": 39.4,
       "signal": "NEUTRAL",
       "ma50": 0.0016,
       "trend": "SOTTO MA50"
@@ -99,10 +99,10 @@
       "trend": "SOTTO MA50"
     },
     "dxy": {
-      "value": 103.972,
-      "percentile": 99.0,
+      "value": 103.81,
+      "percentile": 97.6,
       "signal": "FEAR",
-      "ma50": 102.2195,
+      "ma50": 102.2162,
       "trend": "SOPRA MA50"
     },
     "eurusd": {
@@ -4789,7 +4789,7 @@
     },
     {
       "date": "2026-11-24",
-      "ts": "2026-11-25T04:22",
+      "ts": "2026-11-25T05:09",
       "pc_equity": null,
       "pc_total": 0.95,
       "pc_index": 1.12,
@@ -4800,9 +4800,9 @@
       "hyg_iei": 0.8917666,
       "hyg_iei_src": "MI",
       "eem_spy": 0.07886975,
-      "copper_gold": 0.00153647,
+      "copper_gold": 0.00150552,
       "tip_ief": 1.15069838,
-      "dxy": 103.972,
+      "dxy": 103.81,
       "eurusd": 1.0908,
       "yield_curve": null,
       "yield_curve_src": null,
